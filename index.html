@@ -1,6 +1,29 @@
+<!DOCTYPE html>
 <html>
-    <head><title>Schedge</title></head>
+    <head>
+        <link rel="stylesheet" href="main.css">
+        <title>Schedge</title>
+        <meta content="Schedge" property="og:title" />
+        <meta content="Scheduling For Cool People" property="og:description" />
+        <meta content="https://schedge.net/" property="og:url" />
+        <meta content="https://schedge.net/favicon.png" property="og:image" />
+        <meta content="#e2d2af" data-react-helmet="true" name="theme-color" />
+    </head>
     <body>
-        <p>truly based</p>
+        <div id="accountPanel">
+            <p id="inc_pass" class="accountPanel"></p>
+            <form id="loginPanel" accept-charset=utf-8 action="/schedge.html">
+                <input type="email" id="email" class="accountPanel" autocomplete="on" maxlength="320" placeholder="Email">
+                <input type="password" id="password" class="accountPanel" autocomplete="on" maxlength="30" placeholder="Password">
+                <input type="submit" id="loginSubmit" class="accountPanel" onclick="login(0)" value="Login">
+            </form>
+            <form id="createAccountPanel" accept-charset=utf-8>
+                <input type="email" id="caemail" class="accountPanel" maxlength="320" autocomplete="off" placeholder="Email">
+                <input type="text" id="causername" class="accountPanel" maxlength="30" autocomplete="off" placeholder="Username">
+                <input type="password" id="capassword" class="accountPanel" maxlength="60" autocomplete="off" placeholder="Password">
+                <input type="password" id="cacpassword" class="accountPanel" maxlength="60" autocomplete="off" placeholder="Confirm Password">
+                <input type="submit" id="caSubmit" class="accountPanel" onclick="login(1)" value="Create Account">
+            </form>
+        </div>
     </body>
 </html>
