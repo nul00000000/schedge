@@ -1,11 +1,19 @@
 let currentMonth = 0;
 let currentYear = 0;
 
+let actualYear = 0;
+let actualMonth = 0;
+let actualDay = 0;
+
 function updateCalender() {
+    let label = document.getElementById("monthLabel") as HTMLParagraphElement;
+    const date = new Date(currentYear, currentMonth, 0);  // 2009-11-10
+    const month = date.toLocaleString('default', { month: 'long' });
+    label.textContent = month + " " + currentYear;
     for(let i = 0; i < 42; i++) {
         let cell = document.getElementById("dayRow" + Math.floor(i / 7)) as HTMLTableRowElement;
         let e = cell.children[i % 7] as HTMLTableCellElement;
-        e.style.backgroundColor = "#968254"
+        e.style.backgroundColor = "#968254";
         e.textContent = "";
         (document.getElementById("dayRow5") as HTMLTableRowElement).style.display = "none";
     }
@@ -17,8 +25,15 @@ function updateCalender() {
     for(let i = 0; i < len; i++) {
         let cell = document.getElementById("dayRow" + Math.floor((i + firstDay) / 7)) as HTMLTableRowElement;
         let e = cell.children[(i + firstDay) % 7] as HTMLTableCellElement;
-        e.style.backgroundColor = "#e2d2af"
+        e.style.backgroundColor = "#e2d2af";
         e.textContent = "" + (i + 1);
+    }
+    if(currentMonth == actualMonth && currentYear == actualYear) {
+        let cell = document.getElementById("dayRow" + Math.floor((actualDay + firstDay - 1) / 7)) as HTMLTableRowElement;
+        let e = cell.children[(actualDay + firstDay - 1) % 7] as HTMLTableCellElement;
+        e.style.backgroundColor = "#f7edd9";
+        // e.style.borderColor = "#00cc00";
+        // e.style.borderWidth = "4px";
     }
 }
 
@@ -26,6 +41,9 @@ function onLoad(): void {
     let dt = new Date();
     currentMonth = dt.getMonth();
     currentYear = dt.getFullYear();
+    actualYear = dt.getFullYear();
+    actualMonth = dt.getMonth();
+    actualDay = dt.getDate();
     updateCalender();
 }
 
@@ -39,7 +57,5 @@ function changeMonth(amount): void {
         currentYear++;
         currentMonth -= 12;
     }
-    let label = document.getElementById("monthLabel") as HTMLParagraphElement;
-    label.textContent = currentYear + " " + currentMonth;
     updateCalender();
 }
