@@ -8,9 +8,9 @@
     <body onload="onLoad()">
         <div id="content">
             <div id="selector">
-                <button id="leftButton" class="selector" onclick="changeMonth(-1)"><p class="buttonText">&#60;</p></button>
+                <button id="leftButton" class="selector" onclick="changeMonth(-1)"><p class="buttonText nomarg">&#60;</p></button>
                 <p id="monthLabel" class="selector">Month Moment</p>
-                <button id="rightButton" class="selector" onclick="changeMonth(1)"><p class="buttonText">&#62;</p></button>
+                <button id="rightButton" class="selector" onclick="changeMonth(1)"><p class="buttonText nomarg">&#62;</p></button>
             </div>
             <table id="calender">
                 <tr>
@@ -23,64 +23,73 @@
                     <th>Saturday</th>
                 </tr>
                 <tr id="dayRow0">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
                 </tr>
                 <tr id="dayRow1">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p><div id="test">
+                        <div class="event">Sample Event 1</div>
+                        <div class="event">Event 2</div>
+                        <div class="event">Sample &#x1F60E Event 3</div>
+                        <div class="event">Sample Event 4</div>
+                    </div></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
                 </tr>
                 <tr id="dayRow2">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
                 </tr>
                 <tr id="dayRow3">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
                 </tr>
                 <tr id="dayRow4">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
                 </tr>
                 <tr id="dayRow5">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
+                    <td><p class="nomarg"></p></td>
                 </tr>
             </table>
         </div>
         <div id="adPanel">
             <p>This is advertising &#x1F60E</p>
             <a href="https://monke.gay" target="_blank"><img class="ad" src="/assests/ads/monke.gay.png" alt="there is supposed to be an &quot;ad&quot; here"></a>
+        </div>
+        <div id="infoPanel">
+            <p>Information</p>
+            
         </div>
     </body>
 </html>

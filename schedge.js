@@ -12,7 +12,7 @@ function updateCalender() {
         var cell = document.getElementById("dayRow" + Math.floor(i / 7));
         var e = cell.children[i % 7];
         e.style.backgroundColor = "#968254";
-        e.textContent = "";
+        e.children[0].textContent = "";
         document.getElementById("dayRow5").style.display = "none";
     }
     var firstDay = new Date(currentYear, currentMonth, 1).getDay();
@@ -24,7 +24,7 @@ function updateCalender() {
         var cell = document.getElementById("dayRow" + Math.floor((i + firstDay) / 7));
         var e = cell.children[(i + firstDay) % 7];
         e.style.backgroundColor = "#e2d2af";
-        e.textContent = "" + (i + 1);
+        e.children[0].textContent = "" + (i + 1);
     }
     if (currentMonth == actualMonth && currentYear == actualYear) {
         var cell = document.getElementById("dayRow" + Math.floor((actualDay + firstDay - 1) / 7));

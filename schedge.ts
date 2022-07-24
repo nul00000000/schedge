@@ -14,7 +14,7 @@ function updateCalender() {
         let cell = document.getElementById("dayRow" + Math.floor(i / 7)) as HTMLTableRowElement;
         let e = cell.children[i % 7] as HTMLTableCellElement;
         e.style.backgroundColor = "#968254";
-        e.textContent = "";
+        e.children[0].textContent = "";
         (document.getElementById("dayRow5") as HTMLTableRowElement).style.display = "none";
     }
     let firstDay = new Date(currentYear, currentMonth, 1).getDay();
@@ -26,7 +26,7 @@ function updateCalender() {
         let cell = document.getElementById("dayRow" + Math.floor((i + firstDay) / 7)) as HTMLTableRowElement;
         let e = cell.children[(i + firstDay) % 7] as HTMLTableCellElement;
         e.style.backgroundColor = "#e2d2af";
-        e.textContent = "" + (i + 1);
+        e.children[0].textContent = "" + (i + 1);
     }
     if(currentMonth == actualMonth && currentYear == actualYear) {
         let cell = document.getElementById("dayRow" + Math.floor((actualDay + firstDay - 1) / 7)) as HTMLTableRowElement;
