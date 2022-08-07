@@ -5,7 +5,8 @@ var actualMonth = 0;
 var actualDay = 0;
 function updateCalender() {
     var label = document.getElementById("monthLabel");
-    var date = new Date(currentYear, currentMonth, 0);
+    var date = new Date(currentYear, currentMonth, 1);
+    console.log(date.toString() + " " + currentMonth);
     var month = date.toLocaleString('default', { month: 'long' });
     label.textContent = month + " " + currentYear;
     for (var i = 0; i < 42; i++) {
@@ -39,6 +40,7 @@ function onLoad() {
     actualYear = dt.getFullYear();
     actualMonth = dt.getMonth();
     actualDay = dt.getDate();
+    console.log(dt.toString() + " " + currentMonth);
     updateCalender();
 }
 function changeMonth(amount) {

@@ -7,7 +7,8 @@ let actualDay = 0;
 
 function updateCalender() {
     let label = document.getElementById("monthLabel") as HTMLParagraphElement;
-    const date = new Date(currentYear, currentMonth, 0);  // 2009-11-10
+    const date = new Date(currentYear, currentMonth, 1);
+    console.log(date.toString() + " " + currentMonth);
     const month = date.toLocaleString('default', { month: 'long' });
     label.textContent = month + " " + currentYear;
     for(let i = 0; i < 42; i++) {
@@ -44,6 +45,7 @@ function onLoad(): void {
     actualYear = dt.getFullYear();
     actualMonth = dt.getMonth();
     actualDay = dt.getDate();
+    console.log(dt.toString() + " " + currentMonth);
     updateCalender();
 }
 
