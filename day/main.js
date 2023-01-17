@@ -7,12 +7,12 @@ function updateCalender() {
     var label = document.getElementById("monthLabel");
     var date = new Date(currentYear, currentMonth, 1);
     console.log(date.toString() + " " + currentMonth);
-    var month = date.toLocaleString('default', { month: 'long' });
+    var month = date.toLocaleString('default', { month: 'short' });
     label.textContent = month + " " + currentYear;
     for (var i = 0; i < 42; i++) {
         var cell = document.getElementById("dayRow" + Math.floor(i / 7));
         var e = cell.children[i % 7];
-        e.style.backgroundColor = "var(--empty-brown)";
+        e.style.backgroundColor = "#968254";
         e.children[0].textContent = "";
         document.getElementById("dayRow5").style.display = "none";
     }
@@ -24,14 +24,18 @@ function updateCalender() {
     for (var i = 0; i < len; i++) {
         var cell = document.getElementById("dayRow" + Math.floor((i + firstDay) / 7));
         var e = cell.children[(i + firstDay) % 7];
-        e.style.backgroundColor = "var(--full-brown)";
+        e.style.backgroundColor = "#e2d2af";
         e.children[0].textContent = "" + (i + 1);
     }
     if (currentMonth == actualMonth && currentYear == actualYear) {
         var cell = document.getElementById("dayRow" + Math.floor((actualDay + firstDay - 1) / 7));
         var e = cell.children[(actualDay + firstDay - 1) % 7];
-        e.style.backgroundColor = "var(--selected-brown)";
+        e.style.backgroundColor = "#f7edd9";
     }
+}
+function loadSchedule() {
+    var table = document.querySelector("#daySheet table");
+    table.appendChild(new HTMLTableRowElement());
 }
 function onLoad() {
     var dt = new Date();
@@ -42,6 +46,7 @@ function onLoad() {
     actualDay = dt.getDate();
     console.log(dt.toString() + " " + currentMonth);
     updateCalender();
+    loadSchedule();
 }
 function changeMonth(amount) {
     currentMonth += amount;

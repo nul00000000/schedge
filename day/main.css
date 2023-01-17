@@ -10,44 +10,18 @@
 }
 
 body {
-    background-color: var(--monke-green);
+    background-color: var(--background-color);
     text-align: center;
     font-family: Consolas, monaco, monospace; 
     font-size: 2vh;
 }
 
-#adPanel {
+#miniCalendar {
     position: absolute;
-    top: 0;
+    bottom: 0;
     left: 0;
-    width: 15%;
-    height: 100%;
-    border-right-width: 2px;
-    border-right-color: black;
-    border-right-style: solid;
-    background-color: white;
-}
-
-.ad {
-    display: block;
-    position: relative;
-    top: 40%;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
-    width: 90%;
-    margin: 0 auto;
-    border-radius: 10px;
-    border-width: 2px;
-    border-color: black;
-    border-style: solid;
-}
-
-#content {
-    position: absolute;
-    top: 0;
-    left: 15%;
-    width: 70%;
-    height: 100%;
+    width: 20%;
+    height: 35%;
     background-color: var(--background-color);
 }
 
@@ -65,27 +39,21 @@ body {
     display: inline-block;
     text-align: center;
     height: 100%;
-    font-size: 2vw;
+    font-size: 150%;
     margin-top: 0;
-}
-
-#leftButton {
-    float: left;
-    margin-left: 30%;
-}
-
-#rightButton {
-    float: right;
-    margin-right: 30%;
 }
 
 #leftButton, #rightButton {
     height: 100%;
-    width: 8%;
+    width: 15%;
     border-radius: 4px;
     border: 2px solid black;
-    background-color: var(--selected-brown);
+    background-color: #f7edd9;
     text-align: center;
+}
+
+#monthLabel {
+    transform: translateY(-25%);
 }
 
 .nomarg {
@@ -93,8 +61,7 @@ body {
 }
 
 .buttonText {
-    position: relative;
-    top: -5%;
+    transform: translateY(-10%);
 }
 
 #leftButton:hover, #rightButton:hover {
@@ -106,7 +73,8 @@ body {
 }
 
 #monthLabel {
-    transform: translateY(20%);
+    position: relative;
+    top: 10%;
     display: inline-block;
 }
 
@@ -122,22 +90,22 @@ body {
     table-layout: fixed;
 }
 
-th, td {
+#calender th, #calender td {
     border-radius: 3px;
     border-style: solid;
     background-color: var(--full-brown);
 }
 
-th {
+#calender th {
     height: 5%;
 }
 
-td {
+#calender td {
     -webkit-user-select: none;    
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    text-align: left;
+    text-align: center;
     vertical-align: top;
     font-weight: bold;
 }
@@ -146,41 +114,28 @@ td {
     display: none;
 }
 
-#test {
-    position: relative;
-    bottom: 0.2vh;
-    height: 0;
-}
-
-.event {
-    background-color: var(--monke-green);
-    width: 95%;
-    height: 1.7vh;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 0.4vh;
-    border-radius: 3px;
-    border: 2px solid var(--monke-green-border);
-    font-weight: normal;
-    font-size: 1.5vh;
-}
-
-.event:hover {
-    background-color: var(--monke-green-hover);
-}
-
-.event:active {
-    background-color: var(--monke-green-active);
-}
-
-#infoPanel {
+#daySheet {
     position: absolute;
-    top: 0;
+    bottom: 0;
     right: 0;
-    width: 15%;
+    width: 80%;
     height: 100%;
-    border-left-width: 2px;
-    border-left-color: black;
-    border-left-style: solid;
-    background-color: white;
+    background-color: var(--background-color);
+}
+
+#daySheet table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#timeColumn {
+    width: 10%;
+}
+
+#daySheet th {
+    border: 3px solid black;
+}
+
+#daySheet td {
+    border: 1px solid black;
 }
