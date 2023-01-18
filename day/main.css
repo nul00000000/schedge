@@ -14,6 +14,7 @@ body {
     text-align: center;
     font-family: Consolas, monaco, monospace; 
     font-size: 2vh;
+    overflow: hidden;
 }
 
 #miniCalendar {
@@ -52,16 +53,12 @@ body {
     text-align: center;
 }
 
-#monthLabel {
-    transform: translateY(-25%);
-}
-
 .nomarg {
     margin: 0;
 }
 
 .buttonText {
-    transform: translateY(-10%);
+    transform: translateY(-18%);
 }
 
 #leftButton:hover, #rightButton:hover {
@@ -76,14 +73,14 @@ body {
     position: relative;
     top: 10%;
     display: inline-block;
+    transform: translateY(-35%);
 }
 
 #calender {
-    margin-bottom: 5%;
     margin-left: auto;
     margin-right: auto;
     border-radius: 5px;
-    border-style: solid;
+    border: 3px solid black;
     background-color: var(--empty-brown);
     width: 98%;
     height: 85%;
@@ -114,13 +111,24 @@ body {
     display: none;
 }
 
-#daySheet {
+#daySheetContainer {
     position: absolute;
+    top: 15%;
     bottom: 0;
     right: 0;
-    width: 80%;
-    height: 100%;
+    left: 20%;
+}
+
+#daySheet {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    right: 3px;
+    left: 0;
     background-color: var(--background-color);
+    overflow-y: scroll;
+    border: 3px solid black;
+    border-radius: 5px;
 }
 
 #daySheet table {
@@ -128,14 +136,68 @@ body {
     border-collapse: collapse;
 }
 
-#timeColumn {
-    width: 10%;
-}
-
 #daySheet th {
-    border: 3px solid black;
+    border-bottom: 3px solid black;
+    background-color: var(--empty-brown);
 }
 
-#daySheet td {
+.timeColumn {
+    width: 10%;
     border: 1px solid black;
+    border-left: none;
+    background-color: var(--full-brown)
+}
+
+.eventColumn {
+    border: 1px solid black;
+    border-left: 3px solid black;
+    border-right: none;
+    background-color: var(--selected-brown);
+}
+
+#header {
+    position: absolute;
+    top: 0%;
+    left: 0;
+    bottom: 85%;
+    width: 100%;
+    background-color: white;
+    border-bottom: 3px solid black;
+}
+
+button.header {
+    margin-top: 7.5vh;
+    margin-right: 1vw;
+    height: 5vw;
+    width: 10vw;
+    transform: translate(0, -50%);
+    background-color: #f7edd9;
+    border: 2px solid black;
+    border-radius: 5px;
+    text-align: center;
+    font-family: Consolas, monaco, monospace; 
+    font-size: 2vw;
+    overflow: hidden;
+    display: block;
+    text-align: center;
+    float: right;
+}
+
+button.header:hover {
+    background-color: #dad1c0;
+}
+
+button.header:active {
+    background-color: #cfc7b7;
+}
+
+#title {
+    margin-top: 7vh;
+    transform: translate(0, -50%);
+    float: left;
+    display: block;
+    color: #968254;
+    font-size: 6vw;
+    font-weight: bold;
+    -webkit-text-stroke: 3px black;
 }

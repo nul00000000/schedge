@@ -6,6 +6,11 @@
         <link rel="stylesheet" href="main.css">
     </head>
     <body onload="onLoad()">
+        <div id="header">
+            <p id="title" class="header">Schedge</p>
+            <button id="loginButton" class="header" onclick="location.href='login'">Login</button>
+            <button id="createButton" class="header" onclick="location.href='login'">Create Account</button>
+        </div>
         <div id="miniCalendar">
             <div id="selector">
                 <button id="leftButton" class="selector" onclick="changeMonth(-1)"><p class="buttonText nomarg">&#60;</p></button>
@@ -78,16 +83,17 @@
                 </tr>
             </table>
         </div>
-        <div id="daySheet">
-            <table>
-                <tr>
-                    <th id="timeColumn"></th><th>Example Guy</th>
-                </tr>
-                <tr><td>10:00</td><td>woah</td></tr>
-                <tr><td>10:15</td><td>its</td></tr>
-                <tr><td>10:30</td><td>a</td></tr>
-                <tr><td>10:45</td><td>timeslot</td></tr>
-            </table>
+        <div id="daySheetContainer">
+            <div id="daySheet">
+                <table>
+                    <tr>
+                        <th class="timeColumn"></th><th class="eventColumn">Example Guy</th>
+                    </tr>
+                </table>
+            </div>
         </div>
+        <template id="timetableRow">
+            <tr><td class="timeColumn">TIME</td><td class="eventColumn">EVENT</td></tr>
+        </template>
     </body>
 </html>

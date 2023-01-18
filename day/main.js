@@ -3,6 +3,7 @@ var currentYear = 0;
 var actualYear = 0;
 var actualMonth = 0;
 var actualDay = 0;
+var timetableRowTemplate;
 function updateCalender() {
     var label = document.getElementById("monthLabel");
     var date = new Date(currentYear, currentMonth, 1);
@@ -34,8 +35,17 @@ function updateCalender() {
     }
 }
 function loadSchedule() {
-    var table = document.querySelector("#daySheet table");
-    table.appendChild(new HTMLTableRowElement());
+    var table = document.querySelector("#daySheet tbody");
+    for (var i = 0; i < 96; i++) {
+        var nHour = Math.floor(i / 4);
+        var hour = (nHour < 10 ? "0" : "") + nHour;
+        var nMin = (i % 4) * 15;
+        var min = (nMin < 10 ? "0" : "") + nMin;
+        var row = timetableRowTemplate.content.cloneNode(true).children[0];
+        row.children[0].textContent = hour + ":" + min;
+        row.children[1].textContent = "";
+        table.appendChild(row);
+    }
 }
 function onLoad() {
     var dt = new Date();
@@ -45,6 +55,7 @@ function onLoad() {
     actualMonth = dt.getMonth();
     actualDay = dt.getDate();
     console.log(dt.toString() + " " + currentMonth);
+    timetableRowTemplate = document.querySelector("#timetableRow");
     updateCalender();
     loadSchedule();
 }

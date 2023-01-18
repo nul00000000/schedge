@@ -5,6 +5,8 @@ let actualYear = 0;
 let actualMonth = 0;
 let actualDay = 0;
 
+let timetableRowTemplate: HTMLTemplateElement;
+
 function updateCalender() {
     let label = document.getElementById("monthLabel") as HTMLParagraphElement;
     const date = new Date(currentYear, currentMonth, 1);
@@ -39,8 +41,17 @@ function updateCalender() {
 }
 
 function loadSchedule() {
-    let table = document.querySelector("#daySheet table") as HTMLTableElement;
-    table.appendChild(new HTMLTableRowElement());
+    let table = document.querySelector("#daySheet tbody") as HTMLTableElement;
+    for(let i = 0; i < 96; i++) {
+        let nHour = Math.floor(i / 4);
+        let hour = (nHour < 10 ? "0" : "") + nHour
+        let nMin = (i % 4) * 15;
+        let min = (nMin < 10 ? "0" : "") + nMin
+        let row = (timetableRowTemplate.content.cloneNode(true) as DocumentFragment).children[0] as HTMLTableRowElement;
+        (row.children[0] as HTMLTableCellElement).textContent = hour + ":" + min;
+        (row.children[1] as HTMLTableCellElement).textContent = "";
+        table.appendChild(row);
+    }
 }
 
 function onLoad(): void {
@@ -51,6 +62,7 @@ function onLoad(): void {
     actualMonth = dt.getMonth();
     actualDay = dt.getDate();
     console.log(dt.toString() + " " + currentMonth);
+    timetableRowTemplate = document.querySelector("#timetableRow") as HTMLTemplateElement;
     updateCalender();
     loadSchedule();
 }
