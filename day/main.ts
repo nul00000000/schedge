@@ -7,6 +7,24 @@ let actualDay = 0;
 
 let timetableRowTemplate: HTMLTemplateElement;
 
+let events: EventData[] = [];
+
+class EventData {
+    startTime: number;
+    endTime: number;
+    color: string;
+    title: string;
+    description: string;
+
+    constructor(startTime: number, endTime: number, color: string, title: string, description: string) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.color = color;
+        this.title = title;
+        this.description = description;
+    }
+}
+
 function updateCalender() {
     let label = document.getElementById("monthLabel") as HTMLParagraphElement;
     const date = new Date(currentYear, currentMonth, 1);
@@ -65,6 +83,15 @@ function onLoad(): void {
     timetableRowTemplate = document.querySelector("#timetableRow") as HTMLTemplateElement;
     updateCalender();
     loadSchedule();
+}
+
+function addEvent(startTime: number, length: number, title: string, desc: string = "") {
+    events.push(new EventData(startTime, startTime + length, "white", title, desc));
+    updateEventDisplay();
+}
+
+function updateEventDisplay() {
+    
 }
 
 function changeMonth(amount): void {
