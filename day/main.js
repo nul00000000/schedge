@@ -4,6 +4,17 @@ var actualYear = 0;
 var actualMonth = 0;
 var actualDay = 0;
 var timetableRowTemplate;
+var events = [];
+var EventData = (function () {
+    function EventData(startTime, endTime, color, title, description) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.color = color;
+        this.title = title;
+        this.description = description;
+    }
+    return EventData;
+}());
 function updateCalender() {
     var label = document.getElementById("monthLabel");
     var date = new Date(currentYear, currentMonth, 1);
@@ -58,6 +69,13 @@ function onLoad() {
     timetableRowTemplate = document.querySelector("#timetableRow");
     updateCalender();
     loadSchedule();
+}
+function addEvent(startTime, length, title, desc) {
+    if (desc === void 0) { desc = ""; }
+    events.push(new EventData(startTime, startTime + length, "white", title, desc));
+    updateEventDisplay();
+}
+function updateEventDisplay() {
 }
 function changeMonth(amount) {
     currentMonth += amount;
