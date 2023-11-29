@@ -4,7 +4,7 @@ var a = document.querySelector("#resend") as HTMLAnchorElement;
 
 a.onclick = function () {
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://localhost:8383/resendemail");
+    xhr.open("POST", "https://schedge.net/auth/resendemail");
     xhr.setRequestHeader("Content-Type", "text/plain");
     xhr.send(id);
 };
