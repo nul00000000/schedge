@@ -6,37 +6,21 @@
 body {
     margin: 0;
     text-align: center;
-    font-family: Consolas, monaco, monospace; 
+    /* font-family: Consolas, monaco, monospace;  */
+    font-family: Verdana, Geneva, sans-serif;
     font-size: 2vh;
+    /* overflow: hidden; */
 }
 
-#testimonials {
+#mainContainer {
     position: absolute;
     top: 15%;
-    bottom: 0%;
+    bottom: 15%;
+    z-index: 1;
     width: 100%;
     background-color: lightgrey;
     border-top: 3px solid black;
-}
-
-@keyframes test {
-    from {
-        top: 50%;
-        left: 37%;
-    }
-    to {
-        left: var(--x);
-        top: var(--y);
-    }
-}
-
-.testim {
-    position: absolute;
-
-    animation-name: test;
-    animation-duration: 2s;
-    animation-timing-function: ease;
-    animation-fill-mode: forwards;
+    border-bottom: 3px solid black;
 }
 
 #header {
@@ -45,6 +29,7 @@ body {
     bottom: 15%;
     width: 100%;
     background-color: white;
+    z-index: 0;
 }
 
 button.header {
@@ -57,7 +42,7 @@ button.header {
     border: 2px solid black;
     border-radius: 5px;
     text-align: center;
-    font-family: Consolas, monaco, monospace; 
+    /* font-family: Consolas, monaco, monospace;  */
     font-size: 2vw;
     overflow: hidden;
     display: block;
@@ -75,6 +60,7 @@ button.header:active {
 
 #title {
     margin-top: 7vh;
+    margin-left: 1vh;
     transform: translate(0, -50%);
     float: left;
     display: block;
@@ -82,4 +68,50 @@ button.header:active {
     font-size: 6vw;
     font-weight: bold;
     -webkit-text-stroke: 3px black;
+}
+
+p {
+    line-height: 1em;
+}
+
+#orgWelcome {
+    margin-top: 3vh;
+    font-size: 3vh;
+    color: #215B33;
+}
+
+#footer {
+    position: absolute;
+    top: 85%;
+    bottom: 0%;
+    width: 100%;
+    background-color: white;
+    z-index: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.footerSection {
+    /* background-color: red; */
+    width: 20%;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 0;
+}
+
+#formContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 25%;
+    transform: translate(0, -30%);
+}
+
+#formLogo {
+    height: 100%;
+    margin-right: 3%;
 }

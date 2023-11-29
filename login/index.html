@@ -2,7 +2,6 @@
 <html>
     <head>
         <link rel="stylesheet" href="login.css">
-        <script src="login.js"></script>
         <title>Schedge Login</title>
     </head>
     <body onload="setText()">
@@ -15,10 +14,13 @@
             </form>
             <form id="createAccountPanel" accept-charset=utf-8 action="https://schedge.net/auth/createpost/" autocomplete="off" method="post" onsubmit="return isFormValid()">
                 <input type="email" id="caemail" class="accountPanel" maxlength="320" name="email" autocomplete="off" placeholder="Email">
+                <input type="text" id="cafirst" class="accountPanel" maxlength="32" name="first" autocomplete="off" placeholder="First Name">
+                <input type="text" id="calast" class="accountPanel" maxlength="32" name="last" autocomplete="off" placeholder="Last Name">
                 <input type="password" id="capassword" class="accountPanel" maxlength="60" name="pass" autocomplete="off" placeholder="Password">
                 <input type="password" id="cacpassword" class="accountPanel" maxlength="60" autocomplete="off" placeholder="Confirm Password">
                 <input type="submit" id="caSubmit" class="accountPanel" value="Create Account">
             </form>
         </div>
+        <script src="dist/bundle.js"></script>
     </body>
 </html>

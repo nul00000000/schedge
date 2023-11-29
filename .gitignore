@@ -1,3 +1,4 @@
 .vscode/*
 assests/idk.png
 tsconfig.json
+node_modules

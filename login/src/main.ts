@@ -1,15 +1,4 @@
-function isFormValid(): boolean {
-	var password : HTMLInputElement = document.getElementById("capassword") as HTMLInputElement;
-	var cpassword : HTMLInputElement = document.getElementById("cacpassword") as HTMLInputElement;
-	if(password.value != cpassword.value) {
-		var msg = document.getElementById("inc_pass") as HTMLParagraphElement;
-		msg.style.visibility = "visible";
-		msg.textContent = "Passwords must match";
-		return false;
-	} else {
-		return true;
-	}
-}
+import * as account from "../../src/account";
 
 function setText(): void {
 	var urlParams = new URLSearchParams(window.location.search);
@@ -34,3 +23,10 @@ function setText(): void {
 		incPass.style.visibility = "visible";
 	}
 }
+
+let createForm = (document.querySelector("#createAccountPanel") as HTMLFormElement);
+createForm.onsubmit = () => {
+    return account.isFormValid((createForm.children[0] as HTMLInputElement).value,
+        (createForm.children[3] as HTMLInputElement).value,
+        (createForm.children[4] as HTMLInputElement).value);
+};
