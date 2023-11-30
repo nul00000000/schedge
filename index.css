@@ -26,28 +26,36 @@ body {
 #header {
     position: absolute;
     top: 0%;
-    bottom: 15%;
+    bottom: 85%;
     width: 100%;
     background-color: white;
     z-index: 0;
 }
 
+#accountCorner {
+    height: 100%;
+    width: 50%;
+    margin-right: 0.5%;
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: center;
+}
+
 button.header {
-    margin-top: 7.5vh;
-    margin-right: 1vw;
-    height: 5vw;
+    height: 40%;
     width: 10vw;
-    transform: translate(0, -50%);
     background-color: #f7edd9;
     border: 2px solid black;
     border-radius: 5px;
     text-align: center;
     /* font-family: Consolas, monaco, monospace;  */
-    font-size: 2vw;
+    font-size: 3vh;
     overflow: hidden;
-    display: block;
     text-align: center;
-    float: right;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 button.header:hover {
@@ -65,7 +73,7 @@ button.header:active {
     float: left;
     display: block;
     color: #968254;
-    font-size: 6vw;
+    font-size: 12vh;
     font-weight: bold;
     -webkit-text-stroke: 3px black;
 }
@@ -95,7 +103,7 @@ p {
 
 .footerSection {
     /* background-color: red; */
-    width: 20%;
+    width: 20em;
     height: 100%;
     margin-left: auto;
     margin-right: auto;
