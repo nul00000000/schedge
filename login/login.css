@@ -53,32 +53,7 @@ body {
     visibility: hidden;
 }
 
-#email {
-    width: 50vh;
-    height: 3vh;
-}
-
-#password {
-    width: 50vh;
-    height: 3vh;
-}
-
-#caemail {
-    width: 50vh;
-    height: 3vh;
-}
-
-#causername {
-    width: 50vh;
-    height: 3vh;
-}
-
-#capassword {
-    width: 50vh;
-    height: 3vh;
-}
-
-#cacpassword {
+.textEntry {
     width: 50vh;
     height: 3vh;
 }

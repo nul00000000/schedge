@@ -1,3 +1,4 @@
+//base code for login stuff
 
 enum LoginCode {
     SUCCESS = 0,
@@ -6,7 +7,7 @@ enum LoginCode {
     PASSWORD_MISMATCH
 }
 
-export type LoginState = {
+type LoginState = { //would be export
     msg: string;
     code: LoginCode;
 }
@@ -21,7 +22,7 @@ function doesUsernameExist(user: string): boolean {
     return false;
 }
 
-export function isFormValid(email: string, pass: string, pass2: string): LoginState {
+function isFormValid(email: string, pass: string, pass2: string): LoginState { //would also be export
 	if(email.includes("@") && email.slice(email.indexOf("@")).includes(".")) {
         return {msg: "Email already in use", code: LoginCode.USERNAME_TAKEN};
     } else if(doesEmailExist(email)) {

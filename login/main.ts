@@ -1,4 +1,40 @@
-import * as account from "../../src/account";
+//base code for login stuff
+
+enum LoginCode {
+    SUCCESS = 0,
+    USERNAME_TAKEN,
+    EMAIL_TAKEN,
+    PASSWORD_MISMATCH
+}
+
+type LoginState = {
+    msg: string;
+    code: LoginCode;
+}
+
+function doesEmailExist(email: string): boolean {
+    //TODO check username rather than assuming false
+    return false;
+}
+
+function doesUsernameExist(user: string): boolean {
+    //TODO check username rather than assuming false
+    return false;
+}
+
+function isFormValid(email: string, pass: string, pass2: string): LoginState {
+	if(email.includes("@") && email.slice(email.indexOf("@")).includes(".")) {
+        return {msg: "Email already in use", code: LoginCode.USERNAME_TAKEN};
+    } else if(doesEmailExist(email)) {
+        return {msg: "Email already in use", code: LoginCode.EMAIL_TAKEN};
+    } else if(pass != pass2) {
+        return {msg: "Passwords must match", code: LoginCode.PASSWORD_MISMATCH};
+	} else {
+		return {msg: "Form Valid", code: LoginCode.SUCCESS};
+	}
+}
+
+//actual login code
 
 function setText(): void {
 	var urlParams = new URLSearchParams(window.location.search);
@@ -26,7 +62,7 @@ function setText(): void {
 
 let createForm = (document.querySelector("#createAccountPanel") as HTMLFormElement);
 createForm.onsubmit = () => {
-    return account.isFormValid((createForm.children[0] as HTMLInputElement).value,
+    return isFormValid((createForm.children[0] as HTMLInputElement).value,
         (createForm.children[3] as HTMLInputElement).value,
         (createForm.children[4] as HTMLInputElement).value);
 };
