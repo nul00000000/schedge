@@ -1,20 +1,92 @@
+var LoginCode;
+(function (LoginCode) {
+    LoginCode[LoginCode["SUCCESS"] = 0] = "SUCCESS";
+    LoginCode[LoginCode["USERNAME_TAKEN"] = 1] = "USERNAME_TAKEN";
+    LoginCode[LoginCode["EMAIL_TAKEN"] = 2] = "EMAIL_TAKEN";
+    LoginCode[LoginCode["PASSWORD_MISMATCH"] = 3] = "PASSWORD_MISMATCH";
+})(LoginCode || (LoginCode = {}));
+var Subject;
+(function (Subject) {
+    Subject[Subject["MATH"] = 0] = "MATH";
+    Subject[Subject["SOCIAL"] = 1] = "SOCIAL";
+    Subject[Subject["SCIENCE"] = 2] = "SCIENCE";
+    Subject[Subject["ENGLISH"] = 3] = "ENGLISH";
+    Subject[Subject["MISC"] = 4] = "MISC";
+})(Subject || (Subject = {}));
+var account = {
+    profileRequest: { type: "profile", params: [] },
+    isFormValid: function (email, pass, pass2) {
+        if (email.includes("@") && email.slice(email.indexOf("@")).includes(".")) {
+            return { msg: "Email already in use", code: LoginCode.USERNAME_TAKEN };
+        }
+        else if (pass != pass2) {
+            return { msg: "Passwords must match", code: LoginCode.PASSWORD_MISMATCH };
+        }
+        else {
+            return { msg: "Form Valid", code: LoginCode.SUCCESS };
+        }
+    },
+    requestProfile: function (callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/auth/req/", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                callback(JSON.parse(xhr.responseText));
+            }
+        };
+        var data = JSON.stringify(account.profileRequest);
+        xhr.send(data);
+    },
+    addTutorSlot: function (subject, clas, startHour, startMinute, endHour, endMinute, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/auth/req/", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                callback(JSON.parse(xhr.responseText));
+            }
+        };
+        var data = JSON.stringify({
+            type: "addtutorslot",
+            params: [
+                {
+                    bookerId: 0,
+                    subject: subject,
+                    clas: clas,
+                    startHour: startHour,
+                    startMinute: startMinute,
+                    endHour: endHour,
+                    endMinute: endMinute
+                }
+            ]
+        });
+        xhr.send(data);
+    },
+    getSchedule: function (tutorId, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/auth/req/", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                callback(JSON.parse(xhr.responseText));
+            }
+        };
+        var data = JSON.stringify({
+            type: "getschedule",
+            params: [
+                tutorId
+            ]
+        });
+        xhr.send(data);
+    }
+};
 var currentMonth = 0;
 var currentYear = 0;
 var actualYear = 0;
 var actualMonth = 0;
 var actualDay = 0;
 var timetableRowTemplate;
-var events = [];
-var EventData = (function () {
-    function EventData(startTime, endTime, color, title, description) {
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.color = color;
-        this.title = title;
-        this.description = description;
-    }
-    return EventData;
-}());
 function updateCalender() {
     var label = document.getElementById("monthLabel");
     var date = new Date(currentYear, currentMonth, 1);
@@ -24,7 +96,7 @@ function updateCalender() {
     for (var i = 0; i < 42; i++) {
         var cell = document.getElementById("dayRow" + Math.floor(i / 7));
         var e = cell.children[i % 7];
-        e.style.backgroundColor = "#968254";
+        e.className = "emptyCell";
         e.children[0].textContent = "";
         document.getElementById("dayRow5").style.display = "none";
     }
@@ -36,21 +108,33 @@ function updateCalender() {
     for (var i = 0; i < len; i++) {
         var cell = document.getElementById("dayRow" + Math.floor((i + firstDay) / 7));
         var e = cell.children[(i + firstDay) % 7];
-        e.style.backgroundColor = "#e2d2af";
+        e.className = "fullCell";
+        e.onclick = function () { location.href = '/day'; };
         e.children[0].textContent = "" + (i + 1);
     }
     if (currentMonth == actualMonth && currentYear == actualYear) {
         var cell = document.getElementById("dayRow" + Math.floor((actualDay + firstDay - 1) / 7));
         var e = cell.children[(actualDay + firstDay - 1) % 7];
-        e.style.backgroundColor = "#f7edd9";
+        e.className = "currentCell";
     }
+}
+function generateEventNode(supject, tutor, subject) {
+    var eventThing = document.createElement("div");
+    eventThing.className = "slot " + supject;
+    var tutorName = document.createElement("div");
+    tutorName.textContent = tutor;
+    var subjectName = document.createElement("div");
+    subjectName.textContent = subject;
+    eventThing.appendChild(tutorName);
+    eventThing.appendChild(subjectName);
+    return eventThing;
 }
 function loadSchedule() {
     var table = document.querySelector("#daySheet tbody");
-    for (var i = 0; i < 96; i++) {
-        var nHour = Math.floor(i / 4);
+    for (var i = 16; i < 30; i++) {
+        var nHour = Math.floor(i / 2);
         var hour = (nHour < 10 ? "0" : "") + nHour;
-        var nMin = (i % 4) * 15;
+        var nMin = (i % 2) * 30;
         var min = (nMin < 10 ? "0" : "") + nMin;
         var row = timetableRowTemplate.content.cloneNode(true).children[0];
         row.children[0].textContent = hour + ":" + min;
@@ -70,12 +154,35 @@ function onLoad() {
     updateCalender();
     loadSchedule();
 }
-function addEvent(startTime, length, title, desc) {
-    if (desc === void 0) { desc = ""; }
-    events.push(new EventData(startTime, startTime + length, "white", title, desc));
-    updateEventDisplay();
-}
-function updateEventDisplay() {
+function updateEventDisplay(schedule) {
+    var table = document.querySelector("#daySheet tbody");
+    for (var i = 1; i < table.children.length; i++) {
+        var row = table.children[i];
+        row.children[1].innerHTML = "";
+        table.appendChild(row);
+    }
+    for (var i = 0; i < schedule.slots.length; i++) {
+        var rowIndex = schedule.slots[i].startHour * 2 + (schedule.slots[i].startMinute < 30 ? 0 : 1) - 16;
+        console.log(rowIndex);
+        var row = table.children[rowIndex + 1];
+        var eventThingCont = document.createElement("div");
+        eventThingCont.className = "slotBubble";
+        var subj = "misc";
+        if (schedule.slots[i].subject == Subject.MATH) {
+            subj = "math";
+        }
+        else if (schedule.slots[i].subject == Subject.SOCIAL) {
+            subj = "social";
+        }
+        else if (schedule.slots[i].subject == Subject.SCIENCE) {
+            subj = "science";
+        }
+        else if (schedule.slots[i].subject == Subject.ENGLISH) {
+            subj = "english";
+        }
+        eventThingCont.appendChild(generateEventNode(subj, "", schedule.slots[i].clas));
+        row.children[1].appendChild(eventThingCont);
+    }
 }
 function changeMonth(amount) {
     currentMonth += amount;
@@ -89,3 +196,28 @@ function changeMonth(amount) {
     }
     updateCalender();
 }
+var loginCorner = document.querySelector("#loginCorner");
+var accountCorner = document.querySelector("#accountCorner");
+var tutorControl = document.querySelector("#tutorControl");
+function updateProfileUI(acc) {
+    console.log(acc);
+    if (acc != null) {
+        loginCorner.style.display = "none";
+        accountCorner.style.display = "flex";
+        tutorControl.style.display = "block";
+        document.querySelector("#accountName").textContent = "Hi, " + acc.firstName + " " + acc.lastName;
+    }
+    else {
+        loginCorner.style.display = "flex";
+        accountCorner.style.display = "none";
+        tutorControl.style.display = "none";
+    }
+}
+function submitAddSlot() {
+    var sub = +document.querySelector("#subjectSelect").value;
+    account.addTutorSlot(sub, document.querySelector("#classChoose").value, +document.querySelector("#startHour").value, +document.querySelector("#startMinute").value, +document.querySelector("#endHour").value, +document.querySelector("#endMinute").value, updateEventDisplay);
+}
+function main() {
+    account.requestProfile(updateProfileUI);
+}
+main();

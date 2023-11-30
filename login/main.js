@@ -5,26 +5,82 @@ var LoginCode;
     LoginCode[LoginCode["EMAIL_TAKEN"] = 2] = "EMAIL_TAKEN";
     LoginCode[LoginCode["PASSWORD_MISMATCH"] = 3] = "PASSWORD_MISMATCH";
 })(LoginCode || (LoginCode = {}));
-function doesEmailExist(email) {
-    return false;
-}
-function doesUsernameExist(user) {
-    return false;
-}
-function isFormValid(email, pass, pass2) {
-    if (email.includes("@") && email.slice(email.indexOf("@")).includes(".")) {
-        return { msg: "Email already in use", code: LoginCode.USERNAME_TAKEN };
+var Subject;
+(function (Subject) {
+    Subject[Subject["MATH"] = 0] = "MATH";
+    Subject[Subject["SOCIAL"] = 1] = "SOCIAL";
+    Subject[Subject["SCIENCE"] = 2] = "SCIENCE";
+    Subject[Subject["ENGLISH"] = 3] = "ENGLISH";
+    Subject[Subject["MISC"] = 4] = "MISC";
+})(Subject || (Subject = {}));
+var account = {
+    profileRequest: { type: "profile", params: [] },
+    isFormValid: function (email, pass, pass2) {
+        if (email.includes("@") && email.slice(email.indexOf("@")).includes(".")) {
+            return { msg: "Email already in use", code: LoginCode.USERNAME_TAKEN };
+        }
+        else if (pass != pass2) {
+            return { msg: "Passwords must match", code: LoginCode.PASSWORD_MISMATCH };
+        }
+        else {
+            return { msg: "Form Valid", code: LoginCode.SUCCESS };
+        }
+    },
+    requestProfile: function (callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/auth/req/", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                callback(JSON.parse(xhr.responseText));
+            }
+        };
+        var data = JSON.stringify(account.profileRequest);
+        xhr.send(data);
+    },
+    addTutorSlot: function (subject, clas, startHour, startMinute, endHour, endMinute, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/auth/req/", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                callback(JSON.parse(xhr.responseText));
+            }
+        };
+        var data = JSON.stringify({
+            type: "addtutorslot",
+            params: [
+                {
+                    bookerId: 0,
+                    subject: subject,
+                    clas: clas,
+                    startHour: startHour,
+                    startMinute: startMinute,
+                    endHour: endHour,
+                    endMinute: endMinute
+                }
+            ]
+        });
+        xhr.send(data);
+    },
+    getSchedule: function (tutorId, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/auth/req/", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                callback(JSON.parse(xhr.responseText));
+            }
+        };
+        var data = JSON.stringify({
+            type: "getschedule",
+            params: [
+                tutorId
+            ]
+        });
+        xhr.send(data);
     }
-    else if (doesEmailExist(email)) {
-        return { msg: "Email already in use", code: LoginCode.EMAIL_TAKEN };
-    }
-    else if (pass != pass2) {
-        return { msg: "Passwords must match", code: LoginCode.PASSWORD_MISMATCH };
-    }
-    else {
-        return { msg: "Form Valid", code: LoginCode.SUCCESS };
-    }
-}
+};
 function setText() {
     var urlParams = new URLSearchParams(window.location.search);
     var incPass = document.querySelector("#inc_pass");
@@ -55,5 +111,6 @@ function setText() {
 }
 var createForm = document.querySelector("#createAccountPanel");
 createForm.onsubmit = function () {
-    return isFormValid(createForm.children[0].value, createForm.children[3].value, createForm.children[4].value);
+    return account.isFormValid(createForm.children[0].value, createForm.children[3].value, createForm.children[4].value);
 };
+setText();

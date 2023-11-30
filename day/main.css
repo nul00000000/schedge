@@ -12,7 +12,8 @@
 body {
     background-color: var(--background-color);
     text-align: center;
-    font-family: Consolas, monaco, monospace; 
+    /* font-family: Consolas, monaco, monospace;  */
+    font-family: Verdana, Geneva, sans-serif;
     font-size: 2vh;
     overflow: hidden;
 }
@@ -57,6 +58,36 @@ body {
     margin: 0;
 }
 
+.emptyCell {
+    background-color: var(--empty-brown);
+}
+
+.fullCell {
+    background-color: var(--full-brown);
+}
+
+.currentCell {
+    background-color: var(--selected-brown);
+}
+
+.fullCell:hover {
+    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.2);
+    transform: scale(1.03);
+}
+
+.fullCell:active {
+    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.3);
+}
+
+.currentCell:hover {
+    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.5);
+    transform: scale(1.03);
+}
+
+.currentCell:active {
+    background-color: white;
+}
+
 .buttonText {
     transform: translateY(-18%);
 }
@@ -90,11 +121,11 @@ body {
 #calender th, #calender td {
     border-radius: 3px;
     border-style: solid;
-    background-color: var(--full-brown);
 }
 
 #calender th {
     height: 5%;
+    background-color: var(--full-brown);
 }
 
 #calender td {
@@ -105,6 +136,7 @@ body {
     text-align: center;
     vertical-align: top;
     font-weight: bold;
+    overflow: visible;
 }
 
 #dayRow5 {
@@ -134,6 +166,7 @@ body {
 #daySheet table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
 }
 
 #daySheet th {
@@ -165,22 +198,49 @@ body {
     border-bottom: 3px solid black;
 }
 
+#loginCorner {
+    height: 100%;
+    width: 50%;
+    margin-right: 0.5%;
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: center;
+}
+
+#accountName {
+    height: 20%;
+    width: 100%;
+    margin-top: 1vh;
+    font-size: 3vh;
+    text-align: right;
+}
+
+#accountCorner {
+    height: 100%;
+    width: 50%;
+    margin-right: 0.5%;
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: center;
+}
+
 button.header {
-    margin-top: 7.5vh;
-    margin-right: 1vw;
-    height: 5vw;
+    height: 40%;
     width: 10vw;
-    transform: translate(0, -50%);
     background-color: #f7edd9;
     border: 2px solid black;
     border-radius: 5px;
     text-align: center;
-    font-family: Consolas, monaco, monospace; 
-    font-size: 2vw;
+    /* font-family: Consolas, monaco, monospace;  */
+    font-size: 3vh;
     overflow: hidden;
-    display: block;
     text-align: center;
-    float: right;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 button.header:hover {
@@ -193,11 +253,70 @@ button.header:active {
 
 #title {
     margin-top: 7vh;
+    margin-left: 1vh;
     transform: translate(0, -50%);
     float: left;
     display: block;
     color: #968254;
-    font-size: 6vw;
+    font-size: 12vh;
     font-weight: bold;
     -webkit-text-stroke: 3px black;
+}
+
+.slotBubble {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.slot {
+    border-radius: 5px;
+    border: 3px solid black;
+    padding: 1vh;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.math {
+    background-color: black;
+    color: white;
+}
+
+.science {
+    background-color: green;
+}
+
+.social {
+    background-color: blue;
+}
+
+.english {
+    background-color: red;
+}
+
+.misc {
+    background-color: yellow;
+    color: black;
+}
+
+#tutorControl {
+    position: absolute;
+    top: 15%;
+    left: 0;
+    width: 20%;
+    height: 35%;
+}
+
+#tutorControl p {
+    font-size: small;
+}
+
+#tutorControl label {
+    font-size: medium;
 }

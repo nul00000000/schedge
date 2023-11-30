@@ -2,14 +2,44 @@
 <html>
     <head>
         <title>Day Schedule</title>
-        <script src="main.js"></script>
         <link rel="stylesheet" href="main.css">
     </head>
     <body onload="onLoad()">
         <div id="header">
             <p id="title" class="header">Schedge</p>
-            <button id="loginButton" class="header" onclick="location.href='login'">Login</button>
-            <button id="createButton" class="header" onclick="location.href='login'">Create Account</button>
+            <div id="loginCorner">
+                <button id="loginButton" class="header" onclick="location.href='/login'">Sign In</button>
+                <button id="createButton" class="header" onclick="location.href='/login'">Sign Up</button>
+            </div>
+            <div id="accountCorner">
+                <div id="accountName" class="header">Poo Haver</div>
+                <button id="toAppButton" class="header" onclick="location.href='/app'">Go to App</button>
+            </div>
+        </div>
+        <div id="tutorControl">
+            <h5>Tutor Control</h5>
+            <p>Sorry it lowkey sucks I'm making this at 2am</p>
+            <label for="subjectSelect">Subject</label>
+            <select name="subjectSelect" id="subjectSelect">
+                <option value="0">Math</option>
+                <option value="1">Social Studies</option>
+                <option value="2">Science</option>
+                <option value="3">English</option>
+                <option value="4">Miscellaneous</option>
+            </select>
+            <br>
+            <label for="classChoose">Class</label>
+            <input type="text" name="classChoose" id="classChoose" placeholder="Class">
+            <br>
+            <label for="startHour">Start Time</label>
+            <input type="text" name="startHour" id="startHour" placeholder="Hour (24 hour time)">
+            <input type="text" name="startMinute" id="startMinute" placeholder="Minute (0-59 (obviously))">
+            <br>
+            <label for="endHour">End Time</label>
+            <input type="text" name="endHour" id="endHour" placeholder="Hour">
+            <input type="text" name="endMinute" id="endMinute" placeholder="Minute">
+            <br>
+            <button id="submitTutorSlot" onclick="submitAddSlot()">Add Slot</button>
         </div>
         <div id="miniCalendar">
             <div id="selector">
@@ -95,5 +125,6 @@
         <template id="timetableRow">
             <tr><td class="timeColumn">TIME</td><td class="eventColumn">EVENT</td></tr>
         </template>
+        <script src="main.js"></script>
     </body>
 </html>

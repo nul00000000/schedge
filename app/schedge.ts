@@ -14,7 +14,7 @@ function updateCalender() {
     for(let i = 0; i < 42; i++) {
         let cell = document.getElementById("dayRow" + Math.floor(i / 7)) as HTMLTableRowElement;
         let e = cell.children[i % 7] as HTMLTableCellElement;
-        e.style.backgroundColor = "var(--empty-brown)";
+        e.className = "emptyCell";
         e.children[0].textContent = "";
         (document.getElementById("dayRow5") as HTMLTableRowElement).style.display = "none";
     }
@@ -26,15 +26,14 @@ function updateCalender() {
     for(let i = 0; i < len; i++) {
         let cell = document.getElementById("dayRow" + Math.floor((i + firstDay) / 7)) as HTMLTableRowElement;
         let e = cell.children[(i + firstDay) % 7] as HTMLTableCellElement;
-        e.style.backgroundColor = "var(--full-brown)";
+        e.className = "fullCell";
+        e.onclick = () => {location.href='/day'};
         e.children[0].textContent = "" + (i + 1);
     }
     if(currentMonth == actualMonth && currentYear == actualYear) {
         let cell = document.getElementById("dayRow" + Math.floor((actualDay + firstDay - 1) / 7)) as HTMLTableRowElement;
         let e = cell.children[(actualDay + firstDay - 1) % 7] as HTMLTableCellElement;
-        e.style.backgroundColor = "var(--selected-brown)";
-        // e.style.borderColor = "#00cc00";
-        // e.style.borderWidth = "4px";
+        e.className = "currentCell";
     }
 }
 
