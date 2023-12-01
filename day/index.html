@@ -40,6 +40,9 @@
             <input type="text" name="endMinute" id="endMinute" placeholder="Minute">
             <br>
             <button id="submitTutorSlot" onclick="submitAddSlot()">Add Slot</button>
+            <br><br><br><br>
+            <label for="clearSchedule">This will clear all of your slots!</label>
+            <button name="clearSchedule" id="clearSchedule" onclick="submitClear()">Clear Schedule</button>
         </div>
         <div id="miniCalendar">
             <div id="selector">
@@ -117,13 +120,13 @@
             <div id="daySheet">
                 <table>
                     <tr>
-                        <th class="timeColumn"></th><th class="eventColumn">Example Guy</th>
+                        <th class="timeColumn"></th><th class="eventColumn">Time Slots</th>
                     </tr>
                 </table>
             </div>
         </div>
         <template id="timetableRow">
-            <tr><td class="timeColumn">TIME</td><td class="eventColumn">EVENT</td></tr>
+            <tr><td class="timeColumn">TIME</td><td class="eventColumn"><div class="slotBubble"></div></td></tr>
         </template>
         <script src="main.js"></script>
     </body>

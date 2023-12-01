@@ -18,7 +18,7 @@ type ServerRequest = {
 }
 
 enum Subject {
-    MATH, SOCIAL, SCIENCE, ENGLISH, MISC
+    MATH, SOCIAL, SCIENCE, ENGLISH, MISC, NONE
 }
 
 type TutorSlot = {
@@ -111,7 +111,57 @@ let account = {
             ]
         } as ServerRequest);
         xhr.send(data);
-    }
+    },
+
+    clearSchedule(callback: (schedule: Schedule) => any) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/auth/req/", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if(xhr.readyState === 4 && xhr.status === 200) {
+                callback(JSON.parse(xhr.responseText) as Schedule);
+            }
+        }
+        let data = JSON.stringify({
+            type: "clearschedule",
+            params: []
+        } as ServerRequest);
+        xhr.send(data);
+    },
+
+    getTutorProfile(tutorId: number, callback: (schedule: Schedule) => any) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/auth/req/", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if(xhr.readyState === 4 && xhr.status === 200) {
+                callback(JSON.parse(xhr.responseText) as Schedule);
+            }
+        }
+        let data = JSON.stringify({
+            type: "tutorinfo",
+            params: [
+                tutorId
+            ]
+        } as ServerRequest);
+        xhr.send(data);
+    },
+
+    getAllTutors(callback: (schedule: Profile[]) => any) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/auth/req/", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if(xhr.readyState === 4 && xhr.status === 200) {
+                callback(JSON.parse(xhr.responseText) as Profile[]);
+            }
+        }
+        let data = JSON.stringify({
+            type: "gettutors",
+            params: []
+        } as ServerRequest);
+        xhr.send(data);
+    },
 
 };
 
@@ -164,10 +214,7 @@ function generateEventNode(supject: string, tutor: string, subject: string): HTM
     eventThing.className = "slot " + supject;
     let tutorName = document.createElement("div");
     tutorName.textContent = tutor;
-    let subjectName = document.createElement("div");
-    subjectName.textContent = subject;
     eventThing.appendChild(tutorName);
-    eventThing.appendChild(subjectName);
     return eventThing;
 }
 
@@ -180,7 +227,6 @@ function loadSchedule() {
         let min = (nMin < 10 ? "0" : "") + nMin
         let row = (timetableRowTemplate.content.cloneNode(true) as DocumentFragment).children[0] as HTMLTableRowElement;
         (row.children[0] as HTMLTableCellElement).textContent = hour + ":" + min;
-        (row.children[1] as HTMLTableCellElement).textContent = "";
         table.appendChild(row);
     }
 }
@@ -194,35 +240,37 @@ function onLoad(): void {
     actualDay = dt.getDate();
     console.log(dt.toString() + " " + currentMonth);
     timetableRowTemplate = document.querySelector("#timetableRow") as HTMLTemplateElement;
+    console.log(timetableRowTemplate);
     updateCalender();
     loadSchedule();
 }
 
-function updateEventDisplay(schedule: Schedule) {
+function updateEventDisplay(profiles: Profile[]) {
     let table = document.querySelector("#daySheet tbody") as HTMLTableElement;
     for(let i = 1; i < table.children.length; i++) { 
         let row = table.children[i] as HTMLTableRowElement;
-        row.children[1].innerHTML = "";
-        table.appendChild(row);
+        row.children[1].children[0].innerHTML = "";
     }
-    for(let i = 0; i < schedule.slots.length; i++) {
-        let rowIndex = schedule.slots[i].startHour * 2 + (schedule.slots[i].startMinute < 30 ? 0 : 1) - 16;
-        console.log(rowIndex);
-        let row = table.children[rowIndex + 1];
-        let eventThingCont = document.createElement("div");
-        eventThingCont.className = "slotBubble";
-        let subj = "misc";
-        if(schedule.slots[i].subject == Subject.MATH) {
-            subj = "math";
-        } else if(schedule.slots[i].subject == Subject.SOCIAL) {
-            subj = "social";
-        } else if(schedule.slots[i].subject == Subject.SCIENCE) {
-            subj = "science";
-        } else if(schedule.slots[i].subject == Subject.ENGLISH) {
-            subj = "english";
+    for(let j = 0; j < profiles.length; j++) {
+        let schedule = profiles[j].schedule;
+        for(let i = 0; i < schedule.slots.length; i++) {
+            let rowIndex = schedule.slots[i].startHour * 2 + (schedule.slots[i].startMinute < 30 ? 0 : 1) - 16;
+            let row = table.children[rowIndex + 1];
+            let eventThingCont = row.children[1].children[0];
+            let subj = "noSubject";
+            if(schedule.slots[i].subject == Subject.MATH) {
+                subj = "math";
+            } else if(schedule.slots[i].subject == Subject.SOCIAL) {
+                subj = "social";
+            } else if(schedule.slots[i].subject == Subject.SCIENCE) {
+                subj = "science";
+            } else if(schedule.slots[i].subject == Subject.ENGLISH) {
+                subj = "english";
+            } else if(schedule.slots[i].subject == Subject.MISC) {
+                subj = "misc";
+            }
+            eventThingCont.appendChild(generateEventNode(subj, profiles[j].firstName + " " + profiles[j].lastName.charAt(0), schedule.slots[i].clas));//TODO get name somehow
         }
-        eventThingCont.appendChild(generateEventNode(subj, "", schedule.slots[i].clas));//TODO get name somehow
-        row.children[1].appendChild(eventThingCont);
     }
 }
 
@@ -257,6 +305,7 @@ function updateProfileUI(acc: Profile) {
         accountCorner.style.display = "none";
         tutorControl.style.display = "none";
     }
+    account.getAllTutors(updateEventDisplay);
 }
 
 function submitAddSlot() {
@@ -267,7 +316,11 @@ function submitAddSlot() {
         +(document.querySelector("#startMinute") as HTMLSelectElement).value,
         +(document.querySelector("#endHour") as HTMLSelectElement).value,
         +(document.querySelector("#endMinute") as HTMLSelectElement).value,
-        updateEventDisplay);
+        () => {account.getAllTutors(updateEventDisplay);});
+}
+
+function submitClear() {
+    account.clearSchedule(() => {account.getAllTutors(updateEventDisplay);});
 }
 
 function main(): void {

@@ -268,14 +268,13 @@ button.header:active {
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    gap: 1vh;
 }
 
 .slot {
     border-radius: 5px;
     border: 3px solid black;
     padding: 1vh;
-    margin-left: auto;
-    margin-right: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -285,7 +284,6 @@ button.header:active {
 
 .math {
     background-color: black;
-    color: white;
 }
 
 .science {
@@ -302,6 +300,11 @@ button.header:active {
 
 .misc {
     background-color: yellow;
+    color: black;
+}
+
+.noSubject {
+    background-color: white;
     color: black;
 }
 

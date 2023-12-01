@@ -12,6 +12,7 @@ var Subject;
     Subject[Subject["SCIENCE"] = 2] = "SCIENCE";
     Subject[Subject["ENGLISH"] = 3] = "ENGLISH";
     Subject[Subject["MISC"] = 4] = "MISC";
+    Subject[Subject["NONE"] = 5] = "NONE";
 })(Subject || (Subject = {}));
 var account = {
     profileRequest: { type: "profile", params: [] },
@@ -79,6 +80,53 @@ var account = {
             ]
         });
         xhr.send(data);
+    },
+    clearSchedule: function (callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/auth/req/", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                callback(JSON.parse(xhr.responseText));
+            }
+        };
+        var data = JSON.stringify({
+            type: "clearschedule",
+            params: []
+        });
+        xhr.send(data);
+    },
+    getTutorProfile: function (tutorId, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/auth/req/", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                callback(JSON.parse(xhr.responseText));
+            }
+        };
+        var data = JSON.stringify({
+            type: "tutorinfo",
+            params: [
+                tutorId
+            ]
+        });
+        xhr.send(data);
+    },
+    getAllTutors: function (callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/auth/req/", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                callback(JSON.parse(xhr.responseText));
+            }
+        };
+        var data = JSON.stringify({
+            type: "gettutors",
+            params: []
+        });
+        xhr.send(data);
     }
 };
 var currentMonth = 0;
@@ -123,10 +171,7 @@ function generateEventNode(supject, tutor, subject) {
     eventThing.className = "slot " + supject;
     var tutorName = document.createElement("div");
     tutorName.textContent = tutor;
-    var subjectName = document.createElement("div");
-    subjectName.textContent = subject;
     eventThing.appendChild(tutorName);
-    eventThing.appendChild(subjectName);
     return eventThing;
 }
 function loadSchedule() {
@@ -138,7 +183,6 @@ function loadSchedule() {
         var min = (nMin < 10 ? "0" : "") + nMin;
         var row = timetableRowTemplate.content.cloneNode(true).children[0];
         row.children[0].textContent = hour + ":" + min;
-        row.children[1].textContent = "";
         table.appendChild(row);
     }
 }
@@ -151,37 +195,40 @@ function onLoad() {
     actualDay = dt.getDate();
     console.log(dt.toString() + " " + currentMonth);
     timetableRowTemplate = document.querySelector("#timetableRow");
+    console.log(timetableRowTemplate);
     updateCalender();
     loadSchedule();
 }
-function updateEventDisplay(schedule) {
+function updateEventDisplay(profiles) {
     var table = document.querySelector("#daySheet tbody");
     for (var i = 1; i < table.children.length; i++) {
         var row = table.children[i];
-        row.children[1].innerHTML = "";
-        table.appendChild(row);
+        row.children[1].children[0].innerHTML = "";
     }
-    for (var i = 0; i < schedule.slots.length; i++) {
-        var rowIndex = schedule.slots[i].startHour * 2 + (schedule.slots[i].startMinute < 30 ? 0 : 1) - 16;
-        console.log(rowIndex);
-        var row = table.children[rowIndex + 1];
-        var eventThingCont = document.createElement("div");
-        eventThingCont.className = "slotBubble";
-        var subj = "misc";
-        if (schedule.slots[i].subject == Subject.MATH) {
-            subj = "math";
+    for (var j = 0; j < profiles.length; j++) {
+        var schedule = profiles[j].schedule;
+        for (var i = 0; i < schedule.slots.length; i++) {
+            var rowIndex = schedule.slots[i].startHour * 2 + (schedule.slots[i].startMinute < 30 ? 0 : 1) - 16;
+            var row = table.children[rowIndex + 1];
+            var eventThingCont = row.children[1].children[0];
+            var subj = "noSubject";
+            if (schedule.slots[i].subject == Subject.MATH) {
+                subj = "math";
+            }
+            else if (schedule.slots[i].subject == Subject.SOCIAL) {
+                subj = "social";
+            }
+            else if (schedule.slots[i].subject == Subject.SCIENCE) {
+                subj = "science";
+            }
+            else if (schedule.slots[i].subject == Subject.ENGLISH) {
+                subj = "english";
+            }
+            else if (schedule.slots[i].subject == Subject.MISC) {
+                subj = "misc";
+            }
+            eventThingCont.appendChild(generateEventNode(subj, profiles[j].firstName + " " + profiles[j].lastName.charAt(0), schedule.slots[i].clas));
         }
-        else if (schedule.slots[i].subject == Subject.SOCIAL) {
-            subj = "social";
-        }
-        else if (schedule.slots[i].subject == Subject.SCIENCE) {
-            subj = "science";
-        }
-        else if (schedule.slots[i].subject == Subject.ENGLISH) {
-            subj = "english";
-        }
-        eventThingCont.appendChild(generateEventNode(subj, "", schedule.slots[i].clas));
-        row.children[1].appendChild(eventThingCont);
     }
 }
 function changeMonth(amount) {
@@ -212,10 +259,14 @@ function updateProfileUI(acc) {
         accountCorner.style.display = "none";
         tutorControl.style.display = "none";
     }
+    account.getAllTutors(updateEventDisplay);
 }
 function submitAddSlot() {
     var sub = +document.querySelector("#subjectSelect").value;
-    account.addTutorSlot(sub, document.querySelector("#classChoose").value, +document.querySelector("#startHour").value, +document.querySelector("#startMinute").value, +document.querySelector("#endHour").value, +document.querySelector("#endMinute").value, updateEventDisplay);
+    account.addTutorSlot(sub, document.querySelector("#classChoose").value, +document.querySelector("#startHour").value, +document.querySelector("#startMinute").value, +document.querySelector("#endHour").value, +document.querySelector("#endMinute").value, function () { account.getAllTutors(updateEventDisplay); });
+}
+function submitClear() {
+    account.clearSchedule(function () { account.getAllTutors(updateEventDisplay); });
 }
 function main() {
     account.requestProfile(updateProfileUI);
