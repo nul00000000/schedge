@@ -18,26 +18,13 @@
         </div>
         <div id="tutorControl">
             <h5>Tutor Control</h5>
-            <p>Sorry it lowkey sucks I'm making this at 2am</p>
-            <label for="subjectSelect">Subject</label>
-            <select name="subjectSelect" id="subjectSelect">
-                <option value="0">Math</option>
-                <option value="1">Social Studies</option>
-                <option value="2">Science</option>
-                <option value="3">English</option>
-                <option value="4">Miscellaneous</option>
-            </select>
+            <p>Sorry it looks bad it will look better later (finals week moment)</p>
             <br>
-            <label for="classChoose">Class</label>
-            <input type="text" name="classChoose" id="classChoose" placeholder="Class">
+            <label for="startTime">Start Time</label>
+            <input id="startTime" type="time" name="startTime" min="13:38" max="14:13" value="13:38"/>
             <br>
-            <label for="startHour">Start Time</label>
-            <input type="text" name="startHour" id="startHour" placeholder="Hour (24 hour time)">
-            <input type="text" name="startMinute" id="startMinute" placeholder="Minute (0-59 (obviously))">
-            <br>
-            <label for="endHour">End Time</label>
-            <input type="text" name="endHour" id="endHour" placeholder="Hour">
-            <input type="text" name="endMinute" id="endMinute" placeholder="Minute">
+            <label for="endTime">End Time</label>
+            <input id="endTime" type="time" name="endTime" min="13:38" max="14:13" value="14:13"/>
             <br>
             <button id="submitTutorSlot" onclick="submitAddSlot()">Add Slot</button>
             <br><br><br><br>

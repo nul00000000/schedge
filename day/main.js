@@ -263,7 +263,9 @@ function updateProfileUI(acc) {
 }
 function submitAddSlot() {
     var sub = +document.querySelector("#subjectSelect").value;
-    account.addTutorSlot(sub, document.querySelector("#classChoose").value, +document.querySelector("#startHour").value, +document.querySelector("#startMinute").value, +document.querySelector("#endHour").value, +document.querySelector("#endMinute").value, function () { account.getAllTutors(updateEventDisplay); });
+    var start = document.querySelector("#startTime").value.split(":");
+    var end = document.querySelector("#endTime").value.split(":");
+    account.addTutorSlot(sub, document.querySelector("#classChoose").value, +start[0], +start[1], +end[0], +end[1], function () { account.getAllTutors(updateEventDisplay); });
 }
 function submitClear() {
     account.clearSchedule(function () { account.getAllTutors(updateEventDisplay); });

@@ -308,6 +308,8 @@ button.header:active {
     color: black;
 }
 
+/* Tutor Control */
+
 #tutorControl {
     position: absolute;
     top: 15%;
@@ -322,4 +324,15 @@ button.header:active {
 
 #tutorControl label {
     font-size: medium;
+}
+
+.timeInput {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.timeInput input {
+    width: 2ch;
 }

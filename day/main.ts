@@ -310,13 +310,10 @@ function updateProfileUI(acc: Profile) {
 
 function submitAddSlot() {
     let sub = +(document.querySelector("#subjectSelect") as HTMLSelectElement).value as Subject;
+    let start = (document.querySelector("#startTime") as HTMLSelectElement).value.split(":");
+    let end = (document.querySelector("#endTime") as HTMLSelectElement).value.split(":");
     account.addTutorSlot(sub, 
-        (document.querySelector("#classChoose") as HTMLSelectElement).value,
-        +(document.querySelector("#startHour") as HTMLSelectElement).value,
-        +(document.querySelector("#startMinute") as HTMLSelectElement).value,
-        +(document.querySelector("#endHour") as HTMLSelectElement).value,
-        +(document.querySelector("#endMinute") as HTMLSelectElement).value,
-        () => {account.getAllTutors(updateEventDisplay);});
+        (document.querySelector("#classChoose") as HTMLSelectElement).value, +start[0], +start[1], +end[0], +end[1], () => {account.getAllTutors(updateEventDisplay);});
 }
 
 function submitClear() {
