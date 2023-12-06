@@ -127,27 +127,56 @@ var account = {
             params: []
         });
         xhr.send(data);
-    },
+    }
 };
 var loginCorner = document.querySelector("#loginCorner");
 var accountCorner = document.querySelector("#accountCorner");
+var loggedIn = document.querySelector("#loggedIn");
+var loggedOut = document.querySelector("#loggedOut");
+var openView = document.querySelector("#openView");
+var reservedView = document.querySelector("#reservedView");
+var selfReservedView = document.querySelector("#selfReservedView");
+var slotState = 0;
 var profile;
 function onLoad() {
 }
 function updateProfileUI(acc) {
     console.log(acc);
-    this.profile = acc;
     if (acc != null) {
         loginCorner.style.display = "none";
         accountCorner.style.display = "flex";
         document.querySelector("#accountName").textContent = "Hi, " + acc.firstName + " " + acc.lastName;
+        loggedIn.style.display = "block";
+        loggedOut.style.display = "none";
+        if (slotState == 0) {
+            openView.style.display = "block";
+            reservedView.style.display = "none";
+            selfReservedView.style.display = "none";
+        }
+        else if (slotState == 1) {
+            openView.style.display = "none";
+            reservedView.style.display = "block";
+            selfReservedView.style.display = "none";
+        }
+        else if (slotState == 2) {
+            openView.style.display = "none";
+            reservedView.style.display = "none";
+            selfReservedView.style.display = "block";
+        }
     }
     else {
         loginCorner.style.display = "flex";
         accountCorner.style.display = "none";
+        loggedIn.style.display = "none";
+        loggedOut.style.display = "block";
     }
 }
+function reserveSlot() {
+    slotState = 2;
+    updateProfileUI(profile);
+}
 function main() {
-    account.requestProfile(updateProfileUI);
+    var _this = this;
+    account.requestProfile(function (acc) { updateProfileUI(acc); _this.profile = acc; });
 }
 main();

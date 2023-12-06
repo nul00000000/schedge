@@ -17,11 +17,28 @@
             </div>
         </div>
         <div id="mainContainer">
-            <h1>Tutor Slot</h1>
-            <h2 id="tutorName">Tutor McTutorFace</h2>
-            <h3 id="times">1:38 - 2:14</h3>
-            <h2 type="status">This slot is Open</h2>
-            <button class="schedgeButton">Reserve this slot</button>
+            <div id="loggedIn" style="display: none;">
+                <h1>Tutor Slot</h1>
+                <h2 id="tutorName">Tutor McTutorFace</h2>
+                <h3 id="times">1:38 - 2:14</h3>
+                <h3 id="date">Monday 12/18/2023</h3>
+                <br>
+                <div id="openView" style="display: none;">
+                    <h2 type="status">This slot is Open</h2>
+                    <button class="schedgeButton" onclick="reserveSlot()">Reserve this slot</button>
+                </div>
+                <div id="selfReservedView" style="display: none;">
+                    <h2 type="status">This slot is Reserved by you</h2>
+                    <button class="schedgeButton" onclick="location.href='/app'">Go to App</button>
+                </div>
+                <div id="reservedView" style="display: none;">
+                    <h2 type="status">This slot is Reserved</h2>
+                    <button class="schedgeButton" onclick="location.href='/app'">Go to App</button>
+                </div>
+            </div>
+            <div id="loggedOut" style="display: none;">
+                <h1>Please log in to reserve a slot</h1>
+            </div>
         </div>
         <script src="schedge.js"></script>
     </body>

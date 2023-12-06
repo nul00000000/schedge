@@ -170,6 +170,15 @@ let account = {
 let loginCorner = document.querySelector("#loginCorner") as HTMLDivElement;
 let accountCorner = document.querySelector("#accountCorner") as HTMLDivElement;
 
+let loggedIn = document.querySelector("#loggedIn") as HTMLDivElement;
+let loggedOut = document.querySelector("#loggedOut") as HTMLDivElement;
+
+let openView = document.querySelector("#openView") as HTMLDivElement;
+let reservedView = document.querySelector("#reservedView") as HTMLDivElement;
+let selfReservedView = document.querySelector("#selfReservedView") as HTMLDivElement;
+
+let slotState = 0; //0 open, 1 taken, 2, self-taken
+
 let profile: Profile;
 
 function onLoad() {
@@ -178,19 +187,41 @@ function onLoad() {
 
 function updateProfileUI(acc: Profile) {
     console.log(acc);
-    this.profile = acc;
     if(acc != null) {
         loginCorner.style.display = "none";
         accountCorner.style.display = "flex";
         document.querySelector("#accountName").textContent = "Hi, " + acc.firstName + " " + acc.lastName;
+        loggedIn.style.display = "block";
+        loggedOut.style.display = "none";
+        if(slotState == 0) {
+            openView.style.display = "block";
+            reservedView.style.display = "none";
+            selfReservedView.style.display = "none";
+        } else if(slotState == 1) {
+            openView.style.display = "none";
+            reservedView.style.display = "block";
+            selfReservedView.style.display = "none";
+        } else if(slotState == 2) {
+            openView.style.display = "none";
+            reservedView.style.display = "none";
+            selfReservedView.style.display = "block";
+        }
     } else {
         loginCorner.style.display = "flex";
         accountCorner.style.display = "none";
+        loggedIn.style.display = "none";
+        loggedOut.style.display = "block";
     }
 }
 
+function reserveSlot() {
+    //check if slot got taken already first
+    slotState = 2;
+    updateProfileUI(profile);
+}
+
 function main(): void {
-    account.requestProfile(updateProfileUI);
+    account.requestProfile((acc: Profile) => {updateProfileUI(acc); this.profile = acc;});
 }
 
 main();

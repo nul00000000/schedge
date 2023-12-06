@@ -23,12 +23,13 @@ enum Subject {
 
 type TutorSlot = {
     bookerId: number,
-    subject: Subject,
-    clas: string,
     startHour: number,
     startMinute: number,
     endHour: number,
-    endMinute: number
+    endMinute: number,
+    day: number,
+    month: number,
+    year: number
 }
 
 type Schedule = {
@@ -69,7 +70,7 @@ let account = {
         xhr.send(data);
     },
 
-    addTutorSlot(subject: Subject, clas: string, startHour: number, startMinute: number, endHour: number, endMinute: number, callback: (schedule: Schedule) => any) {
+    addTutorSlot(startHour: number, startMinute: number, endHour: number, endMinute: number, day: number, month: number, year: number, callback: (schedule: Schedule) => any) {
         let xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -83,12 +84,13 @@ let account = {
             params: [
                 {
                     bookerId: 0,
-                    subject: subject,
-                    clas: clas,
                     startHour: startHour,
                     startMinute: startMinute,
                     endHour: endHour,
-                    endMinute: endMinute
+                    endMinute: endMinute,
+                    day: day,
+                    month: month,
+                    year: year
                 } as TutorSlot
             ]
         } as ServerRequest);
@@ -206,24 +208,25 @@ function updateCalender() {
         let e = cell.children[(actualDay + firstDay - 1) % 7] as HTMLTableCellElement;
         e.className = "currentCell";
     }
-    
 }
 
-function generateEventNode(supject: string, tutor: string, subject: string): HTMLDivElement {
+function generateEventNode(supject: string, tutor: string, startTime: number, minuteLength: number): HTMLDivElement {
     let eventThing = document.createElement("div");
     eventThing.className = "slot " + supject;
+    eventThing.style.height = (minuteLength / 1.95) + "vh";
     let tutorName = document.createElement("div");
     tutorName.textContent = tutor;
     eventThing.appendChild(tutorName);
+    eventThing.onclick = () => {location.href = "/slot"};
     return eventThing;
 }
 
 function loadSchedule() {
     let table = document.querySelector("#daySheet tbody") as HTMLTableElement;
-    for(let i = 16; i < 30; i++) { 
-        let nHour = Math.floor(i / 2);
+    for(let i = 0; i < 7; i++) { 
+        let nHour = (38 + i * 5) < 60 ? 12 : 13;
         let hour = (nHour < 10 ? "0" : "") + nHour
-        let nMin = (i % 2) * 30;
+        let nMin = (38 + i * 5) % 60;
         let min = (nMin < 10 ? "0" : "") + nMin
         let row = (timetableRowTemplate.content.cloneNode(true) as DocumentFragment).children[0] as HTMLTableRowElement;
         (row.children[0] as HTMLTableCellElement).textContent = hour + ":" + min;
@@ -265,20 +268,10 @@ function updateEventDisplay(profiles: Profile[]) {
             let row = table.children[rowIndex + 1];
             let eventThingCont = row.children[1].children[0];
             let subj = "noSubject";
-            if(schedule.slots[i].subject == Subject.MATH) {
-                subj = "math";
-            } else if(schedule.slots[i].subject == Subject.SOCIAL) {
-                subj = "social";
-            } else if(schedule.slots[i].subject == Subject.SCIENCE) {
-                subj = "science";
-            } else if(schedule.slots[i].subject == Subject.ENGLISH) {
-                subj = "english";
-            } else if(schedule.slots[i].subject == Subject.MISC) {
-                subj = "misc";
-            }
-            eventThingCont.appendChild(generateEventNode(subj, profiles[j].firstName + " " + profiles[j].lastName.charAt(0), schedule.slots[i].clas));//TODO get name somehow
+            eventThingCont.appendChild(generateEventNode(subj, profiles[j].firstName + " " + profiles[j].lastName.charAt(0), 0, 5));//TODO get name somehow
         }
     }
+    test();
 }
 
 function changeMonth(amount: number): void {
@@ -316,11 +309,9 @@ function updateProfileUI(acc: Profile) {
 }
 
 function submitAddSlot() {
-    let sub = +(document.querySelector("#subjectSelect") as HTMLSelectElement).value as Subject;
     let start = (document.querySelector("#startTime") as HTMLSelectElement).value.split(":");
     let end = (document.querySelector("#endTime") as HTMLSelectElement).value.split(":");
-    account.addTutorSlot(sub, 
-        (document.querySelector("#classChoose") as HTMLSelectElement).value, +start[0], +start[1], +end[0], +end[1], () => {account.getAllTutors(updateEventDisplay);});
+    account.addTutorSlot(+start[0], +start[1], +end[0], +end[1], actualDay, actualMonth, actualYear, () => {account.getAllTutors(updateEventDisplay);});
 }
 
 function submitClear() {
@@ -329,6 +320,17 @@ function submitClear() {
 
 function main(): void {
     account.requestProfile(updateProfileUI);
+}
+
+function test() {
+    let table = document.querySelector("#daySheet tbody") as HTMLTableElement;
+    for(let i = 1; i < table.children.length; i++) { 
+        let row = table.children[i] as HTMLTableRowElement;
+        row.children[1].children[0].innerHTML = "";
+    }
+    let row = table.children[1];
+    let eventThingCont = row.children[1].children[0];
+    eventThingCont.appendChild(generateEventNode("noSubject", "Big Man Guy", 0, 10));//TODO get name somehow
 }
 
 main();
