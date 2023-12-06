@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="main.css">
+        <title>Schedge</title>
+    </head>
+    <body onload="onLoad()">
+        <div id="header">
+            <p id="title" class="header">Schedge</p>
+            <div id="loginCorner">
+                <button id="loginButton" class="header" onclick="location.href='/login'">Sign In</button>
+                <button id="createButton" class="header" onclick="location.href='/login'">Sign Up</button>
+            </div>
+            <div id="accountCorner">
+                <div id="accountName" class="header">Poo Haver</div>
+                <button id="toAppButton" class="header" onclick="location.href='/app'">Go to App</button>
+            </div>
+        </div>
+        <div id="mainContainer">
+            <h1>Tutor Slot</h1>
+            <h2 id="tutorName">Tutor McTutorFace</h2>
+            <h3 id="times">1:38 - 2:14</h3>
+            <h2 type="status">This slot is Open</h2>
+            <button class="schedgeButton">Reserve this slot</button>
+        </div>
+        <script src="schedge.js"></script>
+    </body>
+</html>

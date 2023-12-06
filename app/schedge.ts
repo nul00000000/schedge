@@ -27,7 +27,7 @@ function updateCalender() {
         let cell = document.getElementById("dayRow" + Math.floor((i + firstDay) / 7)) as HTMLTableRowElement;
         let e = cell.children[(i + firstDay) % 7] as HTMLTableCellElement;
         e.className = "fullCell";
-        e.onclick = () => {location.href='/day'};
+        e.onclick = () => {location.href="/day/?day=" + (i + 1) + "&month=" + currentMonth + "&year=" + currentYear};
         e.children[0].textContent = "" + (i + 1);
     }
     if(currentMonth == actualMonth && currentYear == actualYear) {

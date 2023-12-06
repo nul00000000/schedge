@@ -127,7 +127,7 @@ var account = {
             params: []
         });
         xhr.send(data);
-    }
+    },
 };
 var currentMonth = 0;
 var currentYear = 0;
@@ -153,12 +153,15 @@ function updateCalender() {
     if (len + firstDay > 35) {
         document.getElementById("dayRow5").style.display = "contents";
     }
-    for (var i = 0; i < len; i++) {
+    var _loop_1 = function (i) {
         var cell = document.getElementById("dayRow" + Math.floor((i + firstDay) / 7));
         var e = cell.children[(i + firstDay) % 7];
         e.className = "fullCell";
-        e.onclick = function () { location.href = '/day'; };
+        e.onclick = function () { location.href = "/day/?day=" + (i + 1) + "&month=" + currentMonth + "&year=" + currentYear; };
         e.children[0].textContent = "" + (i + 1);
+    };
+    for (var i = 0; i < len; i++) {
+        _loop_1(i);
     }
     if (currentMonth == actualMonth && currentYear == actualYear) {
         var cell = document.getElementById("dayRow" + Math.floor((actualDay + firstDay - 1) / 7));
@@ -187,15 +190,23 @@ function loadSchedule() {
     }
 }
 function onLoad() {
-    var dt = new Date();
-    currentMonth = dt.getMonth();
-    currentYear = dt.getFullYear();
-    actualYear = dt.getFullYear();
-    actualMonth = dt.getMonth();
-    actualDay = dt.getDate();
-    console.log(dt.toString() + " " + currentMonth);
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has("day") && urlParams.has("month") && urlParams.has("year")) {
+        currentMonth = +urlParams.get("month");
+        currentYear = +urlParams.get("year");
+        actualYear = currentYear;
+        actualMonth = currentMonth;
+        actualDay = +urlParams.get("day");
+    }
+    else {
+        var dt = new Date();
+        currentMonth = dt.getMonth();
+        currentYear = dt.getFullYear();
+        actualYear = dt.getFullYear();
+        actualMonth = dt.getMonth();
+        actualDay = dt.getDate();
+    }
     timetableRowTemplate = document.querySelector("#timetableRow");
-    console.log(timetableRowTemplate);
     updateCalender();
     loadSchedule();
 }

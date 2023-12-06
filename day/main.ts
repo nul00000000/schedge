@@ -198,7 +198,7 @@ function updateCalender() {
         let cell = document.getElementById("dayRow" + Math.floor((i + firstDay) / 7)) as HTMLTableRowElement;
         let e = cell.children[(i + firstDay) % 7] as HTMLTableCellElement;
         e.className = "fullCell";
-        e.onclick = () => {location.href='/day'};
+        e.onclick = () => {location.href="/day/?day=" + (i + 1) + "&month=" + currentMonth + "&year=" + currentYear};
         e.children[0].textContent = "" + (i + 1);
     }
     if(currentMonth == actualMonth && currentYear == actualYear) {
@@ -232,15 +232,22 @@ function loadSchedule() {
 }
 
 function onLoad(): void {
-    let dt = new Date();
-    currentMonth = dt.getMonth();
-    currentYear = dt.getFullYear();
-    actualYear = dt.getFullYear();
-    actualMonth = dt.getMonth();
-    actualDay = dt.getDate();
-    console.log(dt.toString() + " " + currentMonth);
+    let urlParams = new URLSearchParams(window.location.search);
+    if(urlParams.has("day") && urlParams.has("month") && urlParams.has("year")) {
+        currentMonth = +urlParams.get("month");
+        currentYear = +urlParams.get("year");
+        actualYear = currentYear;
+        actualMonth = currentMonth;
+        actualDay = +urlParams.get("day");
+    } else {
+        let dt = new Date();
+        currentMonth = dt.getMonth();
+        currentYear = dt.getFullYear();
+        actualYear = dt.getFullYear();
+        actualMonth = dt.getMonth();
+        actualDay = dt.getDate();
+    }
     timetableRowTemplate = document.querySelector("#timetableRow") as HTMLTemplateElement;
-    console.log(timetableRowTemplate);
     updateCalender();
     loadSchedule();
 }
