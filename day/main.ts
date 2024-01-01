@@ -12,28 +12,21 @@ type LoginState = { //would be export
     code: LoginCode;
 }
 
-type ServerRequest = {
-	type: string;
-	params: any[];
-}
-
 enum Subject {
     MATH, SOCIAL, SCIENCE, ENGLISH, MISC, NONE
 }
 
 type TutorSlot = {
+    slotId: number,
+    tutorId: number,
     bookerId: number,
-    startHour: number,
-    startMinute: number,
-    endHour: number,
-    endMinute: number,
-    day: number,
-    month: number,
-    year: number
+    startTime: number,
+    endTime: number
 }
 
 type Schedule = {
     slots: TutorSlot[]
+    hashCode: number;
 }
 
 //TODO im thinking master schedule with everytthing
@@ -46,7 +39,7 @@ type Profile = {
 };
 
 let account = {
-    profileRequest: {type: "profile", params: []} as ServerRequest,
+    profileRequest: {type: "profile"},
     isFormValid(email: string, pass: string, pass2: string): LoginState { //would also be export
         if(email.includes("@") && email.slice(email.indexOf("@")).includes(".")) {
             return {msg: "Email already in use", code: LoginCode.USERNAME_TAKEN};
@@ -70,7 +63,7 @@ let account = {
         xhr.send(data);
     },
 
-    addTutorSlot(startHour: number, startMinute: number, endHour: number, endMinute: number, day: number, month: number, year: number, callback: (schedule: Schedule) => any) {
+    addTutorSlot(tutorId: number, startHour: number, startMinute: number, endHour: number, endMinute: number, day: number, month: number, year: number, callback: (schedule: Schedule) => any) {
         let xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -81,23 +74,18 @@ let account = {
         }
         let data = JSON.stringify({
             type: "addtutorslot",
-            params: [
-                {
+            slot: {
+                    tutorId: tutorId,
                     bookerId: 0,
-                    startHour: startHour,
-                    startMinute: startMinute,
-                    endHour: endHour,
-                    endMinute: endMinute,
-                    day: day,
-                    month: month,
-                    year: year
-                } as TutorSlot
-            ]
-        } as ServerRequest);
+                    startTime: new Date(year, month, day, startHour, startMinute).getTime(),
+                    endTime: new Date(year, month, day, endHour, endMinute).getTime(),
+                } as TutorSlot,
+            startTime: new Date(year, month, day).getTime()
+        });
         xhr.send(data);
     },
 
-    getSchedule(tutorId: number, callback: (schedule: Schedule) => any) {
+    getSchedule(day: number, month: number, year: number, callback: (schedule: Schedule) => any) {
         let xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -108,14 +96,12 @@ let account = {
         }
         let data = JSON.stringify({
             type: "getschedule",
-            params: [
-                tutorId
-            ]
-        } as ServerRequest);
+            startTime: new Date(year, month, day).getTime()
+        });
         xhr.send(data);
     },
 
-    clearSchedule(callback: (schedule: Schedule) => any) {
+    deleteSlots(ids: number[], day: number, month: number, year: number, callback: (schedule: Schedule) => any) {
         let xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -125,45 +111,28 @@ let account = {
             }
         }
         let data = JSON.stringify({
-            type: "clearschedule",
-            params: []
-        } as ServerRequest);
+            type: "deleteslots",
+            ids: ids,
+            startTime: new Date(year, month, day).getTime()
+        });
         xhr.send(data);
     },
 
-    getTutorProfile(tutorId: number, callback: (schedule: Schedule) => any) {
+    getTutorProfile(tutorId: number, callback: (profile: Profile) => any) {
         let xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onreadystatechange = function () {
             if(xhr.readyState === 4 && xhr.status === 200) {
-                callback(JSON.parse(xhr.responseText) as Schedule);
+                callback(JSON.parse(xhr.responseText) as Profile);
             }
         }
         let data = JSON.stringify({
             type: "tutorinfo",
-            params: [
-                tutorId
-            ]
-        } as ServerRequest);
+            tutorId: tutorId
+        });
         xhr.send(data);
-    },
-
-    getAllTutors(callback: (schedule: Profile[]) => any) {
-        let xhr = new XMLHttpRequest();
-        xhr.open("POST", "/auth/req/", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.onreadystatechange = function () {
-            if(xhr.readyState === 4 && xhr.status === 200) {
-                callback(JSON.parse(xhr.responseText) as Profile[]);
-            }
-        }
-        let data = JSON.stringify({
-            type: "gettutors",
-            params: []
-        } as ServerRequest);
-        xhr.send(data);
-    },
+    }
 
 };
 
@@ -176,7 +145,35 @@ let actualYear = 0;
 let actualMonth = 0;
 let actualDay = 0;
 
+let urlParams = new URLSearchParams(window.location.search);
+if(urlParams.has("day") && urlParams.has("month") && urlParams.has("year")) {
+    currentMonth = +urlParams.get("month");
+    currentYear = +urlParams.get("year");
+    actualYear = currentYear;
+    actualMonth = currentMonth;
+    actualDay = +urlParams.get("day");
+} else {
+    let dt = new Date();
+    currentMonth = dt.getMonth();
+    currentYear = dt.getFullYear();
+    actualYear = dt.getFullYear();
+    actualMonth = dt.getMonth();
+    actualDay = dt.getDate();
+}
+
+let tutorDict: {[id: number] : Profile} = {}
+
 let timetableRowTemplate: HTMLTemplateElement;
+
+async function getTutor(id: number): Promise<Profile> {
+    if(tutorDict[id]) {
+        return Promise.resolve(tutorDict[id]);
+    } else {
+        return new Promise<Profile>((resolve, reject) => {
+            account.getTutorProfile(id, (prof: Profile) => {resolve(prof); tutorDict[prof.id] = prof;});
+        });
+    }
+}
 
 function updateCalender() {
     let label = document.getElementById("monthLabel") as HTMLParagraphElement;
@@ -210,10 +207,10 @@ function updateCalender() {
     }
 }
 
-function generateEventNode(supject: string, tutor: string, startTime: number, minuteLength: number): HTMLDivElement {
+function generateEventNode(supject: string, tutor: string, minuteLength: number): HTMLDivElement {
     let eventThing = document.createElement("div");
     eventThing.className = "slot " + supject;
-    eventThing.style.height = (minuteLength / 1.95) + "vh";
+    eventThing.style.height = (minuteLength / 1.92) + "vh";
     let tutorName = document.createElement("div");
     tutorName.textContent = tutor;
     eventThing.appendChild(tutorName);
@@ -224,54 +221,50 @@ function generateEventNode(supject: string, tutor: string, startTime: number, mi
 function loadSchedule() {
     let table = document.querySelector("#daySheet tbody") as HTMLTableElement;
     for(let i = 0; i < 7; i++) { 
-        let nHour = (38 + i * 5) < 60 ? 12 : 13;
-        let hour = (nHour < 10 ? "0" : "") + nHour
+        let nHour = (38 + i * 5) < 60 ? 13 : 14;
         let nMin = (38 + i * 5) % 60;
-        let min = (nMin < 10 ? "0" : "") + nMin
         let row = (timetableRowTemplate.content.cloneNode(true) as DocumentFragment).children[0] as HTMLTableRowElement;
-        (row.children[0] as HTMLTableCellElement).textContent = hour + ":" + min;
+        (row.children[0] as HTMLTableCellElement).textContent = new Date(0, 0, 0, nHour, nMin).toLocaleTimeString().replace(":00", "");
+        (row.children[1].children[0] as HTMLDivElement).style.transform = "translateX(" + (i * 0.5) + "%)";
         table.appendChild(row);
     }
 }
 
 function onLoad(): void {
-    let urlParams = new URLSearchParams(window.location.search);
-    if(urlParams.has("day") && urlParams.has("month") && urlParams.has("year")) {
-        currentMonth = +urlParams.get("month");
-        currentYear = +urlParams.get("year");
-        actualYear = currentYear;
-        actualMonth = currentMonth;
-        actualDay = +urlParams.get("day");
-    } else {
-        let dt = new Date();
-        currentMonth = dt.getMonth();
-        currentYear = dt.getFullYear();
-        actualYear = dt.getFullYear();
-        actualMonth = dt.getMonth();
-        actualDay = dt.getDate();
-    }
     timetableRowTemplate = document.querySelector("#timetableRow") as HTMLTemplateElement;
     updateCalender();
     loadSchedule();
 }
 
-function updateEventDisplay(profiles: Profile[]) {
-    let table = document.querySelector("#daySheet tbody") as HTMLTableElement;
-    for(let i = 1; i < table.children.length; i++) { 
-        let row = table.children[i] as HTMLTableRowElement;
-        row.children[1].children[0].innerHTML = "";
-    }
-    for(let j = 0; j < profiles.length; j++) {
-        let schedule = profiles[j].schedule;
+let currentSchedule: Schedule;
+
+function updateEventDisplay(schedule: Schedule) {
+    if(schedule && (!currentSchedule || currentSchedule.hashCode != schedule.hashCode)) {
+        currentSchedule = schedule;
+        let table = document.querySelector("#daySheet tbody") as HTMLTableElement;
+        for(let i = 1; i < table.children.length; i++) {
+            let row = table.children[i] as HTMLTableRowElement;
+            row.children[1].children[0].innerHTML = "";
+        }
         for(let i = 0; i < schedule.slots.length; i++) {
-            let rowIndex = schedule.slots[i].startHour * 2 + (schedule.slots[i].startMinute < 30 ? 0 : 1) - 16;
+            let start = new Date(schedule.slots[i].startTime);
+            let rowIndex = start.getHours() * 12 + Math.floor(start.getMinutes() / 5) - 163;
             let row = table.children[rowIndex + 1];
-            let eventThingCont = row.children[1].children[0];
-            let subj = "noSubject";
-            eventThingCont.appendChild(generateEventNode(subj, profiles[j].firstName + " " + profiles[j].lastName.charAt(0), 0, 5));//TODO get name somehow
+            if(row) {
+                let eventThingCont = row.children[1].children[0];
+                let subj = "noSubject";
+                let length = (schedule.slots[i].endTime - schedule.slots[i].startTime) / 60000;
+                let tutorProf = getTutor(schedule.slots[i].tutorId);
+                tutorProf.then((profile) => {
+                    eventThingCont.appendChild(generateEventNode(subj, profile.firstName + " " + profile.lastName.charAt(0), length));
+                }, () => {
+                    console.log("Failed to get tutor profile");
+                });
+            } else {
+                console.log("Invalid time: " + start.toLocaleTimeString() + " " + rowIndex);
+            }
         }
     }
-    test();
 }
 
 function changeMonth(amount: number): void {
@@ -293,8 +286,10 @@ let loginCorner = document.querySelector("#loginCorner") as HTMLDivElement;
 let accountCorner = document.querySelector("#accountCorner") as HTMLDivElement;
 let tutorControl = document.querySelector("#tutorControl") as HTMLDivElement;
 
+let profile: Profile;
+
 function updateProfileUI(acc: Profile) {
-    console.log(acc);
+    profile = acc;
     if(acc != null) {
         loginCorner.style.display = "none";
         accountCorner.style.display = "flex";
@@ -305,32 +300,30 @@ function updateProfileUI(acc: Profile) {
         accountCorner.style.display = "none";
         tutorControl.style.display = "none";
     }
-    account.getAllTutors(updateEventDisplay);
+    account.getSchedule(actualDay, actualMonth, actualYear, updateEventDisplay);
+    setInterval(() => {account.getSchedule(actualDay, actualMonth, actualYear, updateEventDisplay);}, 5000);
 }
 
 function submitAddSlot() {
     let start = (document.querySelector("#startTime") as HTMLSelectElement).value.split(":");
     let end = (document.querySelector("#endTime") as HTMLSelectElement).value.split(":");
-    account.addTutorSlot(+start[0], +start[1], +end[0], +end[1], actualDay, actualMonth, actualYear, () => {account.getAllTutors(updateEventDisplay);});
+    account.addTutorSlot(profile.id, +start[0], +start[1], +end[0], +end[1], actualDay, actualMonth, actualYear, updateEventDisplay);
 }
 
 function submitClear() {
-    account.clearSchedule(() => {account.getAllTutors(updateEventDisplay);});
+    let toDel: number[] = [];
+    for(let i = 0; i < currentSchedule.slots.length; i++) {
+        if(currentSchedule.slots[i].tutorId == profile.id) {
+            toDel.push(currentSchedule.slots[i].slotId);
+        }
+    }
+    account.deleteSlots(toDel, actualDay, actualMonth, actualYear, updateEventDisplay);
 }
 
 function main(): void {
-    account.requestProfile(updateProfileUI);
-}
-
-function test() {
-    let table = document.querySelector("#daySheet tbody") as HTMLTableElement;
-    for(let i = 1; i < table.children.length; i++) { 
-        let row = table.children[i] as HTMLTableRowElement;
-        row.children[1].children[0].innerHTML = "";
-    }
-    let row = table.children[1];
-    let eventThingCont = row.children[1].children[0];
-    eventThingCont.appendChild(generateEventNode("noSubject", "Big Man Guy", 0, 10));//TODO get name somehow
+    account.requestProfile((profile: Profile) => {
+        updateProfileUI(profile);
+    });
 }
 
 main();

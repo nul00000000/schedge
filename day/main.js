@@ -1,3 +1,39 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
 var LoginCode;
 (function (LoginCode) {
     LoginCode[LoginCode["SUCCESS"] = 0] = "SUCCESS";
@@ -15,7 +51,7 @@ var Subject;
     Subject[Subject["NONE"] = 5] = "NONE";
 })(Subject || (Subject = {}));
 var account = {
-    profileRequest: { type: "profile", params: [] },
+    profileRequest: { type: "profile" },
     isFormValid: function (email, pass, pass2) {
         if (email.includes("@") && email.slice(email.indexOf("@")).includes(".")) {
             return { msg: "Email already in use", code: LoginCode.USERNAME_TAKEN };
@@ -39,7 +75,7 @@ var account = {
         var data = JSON.stringify(account.profileRequest);
         xhr.send(data);
     },
-    addTutorSlot: function (startHour, startMinute, endHour, endMinute, day, month, year, callback) {
+    addTutorSlot: function (tutorId, startHour, startMinute, endHour, endMinute, day, month, year, callback) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -50,22 +86,17 @@ var account = {
         };
         var data = JSON.stringify({
             type: "addtutorslot",
-            params: [
-                {
-                    bookerId: 0,
-                    startHour: startHour,
-                    startMinute: startMinute,
-                    endHour: endHour,
-                    endMinute: endMinute,
-                    day: day,
-                    month: month,
-                    year: year
-                }
-            ]
+            slot: {
+                tutorId: tutorId,
+                bookerId: 0,
+                startTime: new Date(year, month, day, startHour, startMinute).getTime(),
+                endTime: new Date(year, month, day, endHour, endMinute).getTime()
+            },
+            startTime: new Date(year, month, day).getTime()
         });
         xhr.send(data);
     },
-    getSchedule: function (tutorId, callback) {
+    getSchedule: function (day, month, year, callback) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -76,13 +107,11 @@ var account = {
         };
         var data = JSON.stringify({
             type: "getschedule",
-            params: [
-                tutorId
-            ]
+            startTime: new Date(year, month, day).getTime()
         });
         xhr.send(data);
     },
-    clearSchedule: function (callback) {
+    deleteSlots: function (ids, day, month, year, callback) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -92,8 +121,9 @@ var account = {
             }
         };
         var data = JSON.stringify({
-            type: "clearschedule",
-            params: []
+            type: "deleteslots",
+            ids: ids,
+            startTime: new Date(year, month, day).getTime()
         });
         xhr.send(data);
     },
@@ -108,24 +138,7 @@ var account = {
         };
         var data = JSON.stringify({
             type: "tutorinfo",
-            params: [
-                tutorId
-            ]
-        });
-        xhr.send(data);
-    },
-    getAllTutors: function (callback) {
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/auth/req/", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                callback(JSON.parse(xhr.responseText));
-            }
-        };
-        var data = JSON.stringify({
-            type: "gettutors",
-            params: []
+            tutorId: tutorId
         });
         xhr.send(data);
     }
@@ -135,7 +148,39 @@ var currentYear = 0;
 var actualYear = 0;
 var actualMonth = 0;
 var actualDay = 0;
+var urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has("day") && urlParams.has("month") && urlParams.has("year")) {
+    currentMonth = +urlParams.get("month");
+    currentYear = +urlParams.get("year");
+    actualYear = currentYear;
+    actualMonth = currentMonth;
+    actualDay = +urlParams.get("day");
+}
+else {
+    var dt = new Date();
+    currentMonth = dt.getMonth();
+    currentYear = dt.getFullYear();
+    actualYear = dt.getFullYear();
+    actualMonth = dt.getMonth();
+    actualDay = dt.getDate();
+}
+var tutorDict = {};
 var timetableRowTemplate;
+function getTutor(id) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            if (tutorDict[id]) {
+                return [2, Promise.resolve(tutorDict[id])];
+            }
+            else {
+                return [2, new Promise(function (resolve, reject) {
+                        account.getTutorProfile(id, function (prof) { resolve(prof); tutorDict[prof.id] = prof; });
+                    })];
+            }
+            return [2];
+        });
+    });
+}
 function updateCalender() {
     var label = document.getElementById("monthLabel");
     var date = new Date(currentYear, currentMonth, 1);
@@ -170,10 +215,10 @@ function updateCalender() {
         e.className = "currentCell";
     }
 }
-function generateEventNode(supject, tutor, startTime, minuteLength) {
+function generateEventNode(supject, tutor, minuteLength) {
     var eventThing = document.createElement("div");
     eventThing.className = "slot " + supject;
-    eventThing.style.height = (minuteLength / 1.95) + "vh";
+    eventThing.style.height = (minuteLength / 1.92) + "vh";
     var tutorName = document.createElement("div");
     tutorName.textContent = tutor;
     eventThing.appendChild(tutorName);
@@ -183,53 +228,51 @@ function generateEventNode(supject, tutor, startTime, minuteLength) {
 function loadSchedule() {
     var table = document.querySelector("#daySheet tbody");
     for (var i = 0; i < 7; i++) {
-        var nHour = (38 + i * 5) < 60 ? 12 : 13;
-        var hour = (nHour < 10 ? "0" : "") + nHour;
+        var nHour = (38 + i * 5) < 60 ? 13 : 14;
         var nMin = (38 + i * 5) % 60;
-        var min = (nMin < 10 ? "0" : "") + nMin;
         var row = timetableRowTemplate.content.cloneNode(true).children[0];
-        row.children[0].textContent = hour + ":" + min;
+        row.children[0].textContent = new Date(0, 0, 0, nHour, nMin).toLocaleTimeString().replace(":00", "");
+        row.children[1].children[0].style.transform = "translateX(" + (i * 0.5) + "%)";
         table.appendChild(row);
     }
 }
 function onLoad() {
-    var urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has("day") && urlParams.has("month") && urlParams.has("year")) {
-        currentMonth = +urlParams.get("month");
-        currentYear = +urlParams.get("year");
-        actualYear = currentYear;
-        actualMonth = currentMonth;
-        actualDay = +urlParams.get("day");
-    }
-    else {
-        var dt = new Date();
-        currentMonth = dt.getMonth();
-        currentYear = dt.getFullYear();
-        actualYear = dt.getFullYear();
-        actualMonth = dt.getMonth();
-        actualDay = dt.getDate();
-    }
     timetableRowTemplate = document.querySelector("#timetableRow");
     updateCalender();
     loadSchedule();
 }
-function updateEventDisplay(profiles) {
-    var table = document.querySelector("#daySheet tbody");
-    for (var i = 1; i < table.children.length; i++) {
-        var row = table.children[i];
-        row.children[1].children[0].innerHTML = "";
-    }
-    for (var j = 0; j < profiles.length; j++) {
-        var schedule = profiles[j].schedule;
-        for (var i = 0; i < schedule.slots.length; i++) {
-            var rowIndex = schedule.slots[i].startHour * 2 + (schedule.slots[i].startMinute < 30 ? 0 : 1) - 16;
+var currentSchedule;
+function updateEventDisplay(schedule) {
+    if (schedule && (!currentSchedule || currentSchedule.hashCode != schedule.hashCode)) {
+        currentSchedule = schedule;
+        var table = document.querySelector("#daySheet tbody");
+        for (var i = 1; i < table.children.length; i++) {
+            var row = table.children[i];
+            row.children[1].children[0].innerHTML = "";
+        }
+        var _loop_2 = function (i) {
+            var start = new Date(schedule.slots[i].startTime);
+            var rowIndex = start.getHours() * 12 + Math.floor(start.getMinutes() / 5) - 163;
             var row = table.children[rowIndex + 1];
-            var eventThingCont = row.children[1].children[0];
-            var subj = "noSubject";
-            eventThingCont.appendChild(generateEventNode(subj, profiles[j].firstName + " " + profiles[j].lastName.charAt(0), 0, 5));
+            if (row) {
+                var eventThingCont_1 = row.children[1].children[0];
+                var subj_1 = "noSubject";
+                var length_1 = (schedule.slots[i].endTime - schedule.slots[i].startTime) / 60000;
+                var tutorProf = getTutor(schedule.slots[i].tutorId);
+                tutorProf.then(function (profile) {
+                    eventThingCont_1.appendChild(generateEventNode(subj_1, profile.firstName + " " + profile.lastName.charAt(0), length_1));
+                }, function () {
+                    console.log("Failed to get tutor profile");
+                });
+            }
+            else {
+                console.log("Invalid time: " + start.toLocaleTimeString() + " " + rowIndex);
+            }
+        };
+        for (var i = 0; i < schedule.slots.length; i++) {
+            _loop_2(i);
         }
     }
-    test();
 }
 function changeMonth(amount) {
     currentMonth += amount;
@@ -246,8 +289,9 @@ function changeMonth(amount) {
 var loginCorner = document.querySelector("#loginCorner");
 var accountCorner = document.querySelector("#accountCorner");
 var tutorControl = document.querySelector("#tutorControl");
+var profile;
 function updateProfileUI(acc) {
-    console.log(acc);
+    profile = acc;
     if (acc != null) {
         loginCorner.style.display = "none";
         accountCorner.style.display = "flex";
@@ -259,27 +303,26 @@ function updateProfileUI(acc) {
         accountCorner.style.display = "none";
         tutorControl.style.display = "none";
     }
-    account.getAllTutors(updateEventDisplay);
+    account.getSchedule(actualDay, actualMonth, actualYear, updateEventDisplay);
+    setInterval(function () { account.getSchedule(actualDay, actualMonth, actualYear, updateEventDisplay); }, 5000);
 }
 function submitAddSlot() {
     var start = document.querySelector("#startTime").value.split(":");
     var end = document.querySelector("#endTime").value.split(":");
-    account.addTutorSlot(+start[0], +start[1], +end[0], +end[1], actualDay, actualMonth, actualYear, function () { account.getAllTutors(updateEventDisplay); });
+    account.addTutorSlot(profile.id, +start[0], +start[1], +end[0], +end[1], actualDay, actualMonth, actualYear, updateEventDisplay);
 }
 function submitClear() {
-    account.clearSchedule(function () { account.getAllTutors(updateEventDisplay); });
+    var toDel = [];
+    for (var i = 0; i < currentSchedule.slots.length; i++) {
+        if (currentSchedule.slots[i].tutorId == profile.id) {
+            toDel.push(currentSchedule.slots[i].slotId);
+        }
+    }
+    account.deleteSlots(toDel, actualDay, actualMonth, actualYear, updateEventDisplay);
 }
 function main() {
-    account.requestProfile(updateProfileUI);
-}
-function test() {
-    var table = document.querySelector("#daySheet tbody");
-    for (var i = 1; i < table.children.length; i++) {
-        var row_1 = table.children[i];
-        row_1.children[1].children[0].innerHTML = "";
-    }
-    var row = table.children[1];
-    var eventThingCont = row.children[1].children[0];
-    eventThingCont.appendChild(generateEventNode("noSubject", "Big Man Guy", 0, 10));
+    account.requestProfile(function (profile) {
+        updateProfileUI(profile);
+    });
 }
 main();
