@@ -310,7 +310,7 @@ function updateProfileUI(acc: Profile) {
 function submitAddSlot() {
     let start = (document.querySelector("#startTime") as HTMLSelectElement).value.split(":");
     let end = (document.querySelector("#endTime") as HTMLSelectElement).value.split(":");
-    if(((60 * +start[0]) + +start[1]) >= 818 && ((60 * +end[0]) + +end[1]) <= 853) {
+    if(((60 * +start[0]) + +start[1]) >= 818 && ((60 * +end[0]) + +end[1]) <= 853 && ((60 * +end[0]) + +end[1]) - ((60 * +start[0]) + +start[1]) >= 10) {
         account.addTutorSlot(profile.id, +start[0], +start[1], +end[0], +end[1], actualDay, actualMonth, actualYear, updateEventDisplay);
     }
 }
