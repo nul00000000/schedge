@@ -36,6 +36,7 @@ type Profile = {
 	firstName: string,
 	lastName: string,
 	schedule: Schedule
+    tutorType: number;
 };
 
 let account = {
@@ -253,7 +254,7 @@ function updateEventDisplay(schedule: Schedule) {
                 let row = table.children[rowIndex + 1];
                 if(row) {
                     let eventThingCont = row.children[1].children[0];
-                    let subj = "noSubject";
+                    let subj = schedule.slots[i].tutorId == profile.id ? "misc" : "noSubject";
                     let length = (schedule.slots[i].endTime - schedule.slots[i].startTime) / 60000;
                     let tutorProf = getTutor(schedule.slots[i].tutorId);
                     tutorProf.then((profile) => {
@@ -295,7 +296,7 @@ function updateProfileUI(acc: Profile) {
     if(acc != null) {
         loginCorner.style.display = "none";
         accountCorner.style.display = "flex";
-        tutorControl.style.display = "block"; //if tutor
+        tutorControl.style.display = profile.tutorType == 1 ? "block" : "none";
         document.querySelector("#accountName").textContent = "Hi, " + acc.firstName + " " + acc.lastName;
     } else {
         loginCorner.style.display = "flex";

@@ -257,7 +257,7 @@ function updateEventDisplay(schedule) {
                 var row = table.children[rowIndex + 1];
                 if (row) {
                     var eventThingCont_1 = row.children[1].children[0];
-                    var subj_1 = "noSubject";
+                    var subj_1 = schedule.slots[i].tutorId == profile.id ? "misc" : "noSubject";
                     var length_1 = (schedule.slots[i].endTime - schedule.slots[i].startTime) / 60000;
                     var tutorProf = getTutor(schedule.slots[i].tutorId);
                     tutorProf.then(function (profile) {
@@ -297,7 +297,7 @@ function updateProfileUI(acc) {
     if (acc != null) {
         loginCorner.style.display = "none";
         accountCorner.style.display = "flex";
-        tutorControl.style.display = "block";
+        tutorControl.style.display = profile.tutorType == 1 ? "block" : "none";
         document.querySelector("#accountName").textContent = "Hi, " + acc.firstName + " " + acc.lastName;
     }
     else {
