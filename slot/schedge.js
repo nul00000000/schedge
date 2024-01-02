@@ -75,7 +75,7 @@ var account = {
         });
         xhr.send(data);
     },
-    deleteSlots: function (ids, day, month, year, callback) {
+    deleteSlots: function (ids, callback, day, month, year) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -87,7 +87,7 @@ var account = {
         var data = JSON.stringify({
             type: "deleteslots",
             ids: ids,
-            startTime: new Date(year, month, day).getTime()
+            startTime: year == 0 ? new Date() : new Date(year, month, day).getTime()
         });
         xhr.send(data);
     },
@@ -160,6 +160,7 @@ var loggedOut;
 var openView;
 var reservedView;
 var selfReservedView;
+var ownerView;
 var profile;
 var loaded = false;
 var slot;
@@ -171,20 +172,29 @@ function updateSlotUI(slot) {
         document.querySelector("#times").textContent = start.toLocaleTimeString().replace(":00", "") + " - " + end.toLocaleTimeString().replace(":00", "");
         document.querySelector("#date").textContent = start.toLocaleString('en-US', { weekday: 'long' }) + " " + start.toLocaleDateString();
         if (profile) {
-            if (slot.bookerId == 0) {
+            if (slot.tutorId == profile.id) {
+                openView.style.display = "none";
+                reservedView.style.display = "none";
+                selfReservedView.style.display = "none";
+                ownerView.style.display = "block";
+            }
+            else if (slot.bookerId == 0) {
                 openView.style.display = "block";
                 reservedView.style.display = "none";
                 selfReservedView.style.display = "none";
+                ownerView.style.display = "none";
             }
             else if (slot.bookerId == profile.id) {
                 openView.style.display = "none";
                 reservedView.style.display = "none";
                 selfReservedView.style.display = "block";
+                ownerView.style.display = "none";
             }
             else {
                 openView.style.display = "none";
                 reservedView.style.display = "block";
                 selfReservedView.style.display = "none";
+                ownerView.style.display = "none";
             }
         }
     }
@@ -224,6 +234,7 @@ function onLoad() {
     openView = document.querySelector("#openView");
     reservedView = document.querySelector("#reservedView");
     selfReservedView = document.querySelector("#selfReservedView");
+    ownerView = document.querySelector("#ownerView");
     main();
 }
 function updateProfileUI(acc) {
@@ -241,6 +252,10 @@ function updateProfileUI(acc) {
         loggedIn.style.display = "none";
         loggedOut.style.display = "block";
     }
+}
+function deleteSlot() {
+    var d = new Date(slot.startTime);
+    account.deleteSlots([slot.slotId], function () { location.href = "/day/?day=" + d.getDate() + "&month=" + d.getMonth() + " &year=" + d.getFullYear(); });
 }
 function reserveSlot() {
     account.reserveTutorSlot(slot.slotId, updateSlotUI);
