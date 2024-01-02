@@ -251,22 +251,24 @@ function updateEventDisplay(schedule) {
             row.children[1].children[0].innerHTML = "";
         }
         var _loop_2 = function (i) {
-            var start = new Date(schedule.slots[i].startTime);
-            var rowIndex = start.getHours() * 12 + Math.floor(start.getMinutes() / 5) - 163;
-            var row = table.children[rowIndex + 1];
-            if (row) {
-                var eventThingCont_1 = row.children[1].children[0];
-                var subj_1 = "noSubject";
-                var length_1 = (schedule.slots[i].endTime - schedule.slots[i].startTime) / 60000;
-                var tutorProf = getTutor(schedule.slots[i].tutorId);
-                tutorProf.then(function (profile) {
-                    eventThingCont_1.appendChild(generateEventNode(subj_1, profile.firstName + " " + profile.lastName.charAt(0), schedule.slots[i].tutorId, schedule.slots[i].slotId, length_1));
-                }, function () {
-                    console.log("Failed to get tutor profile");
-                });
-            }
-            else {
-                console.log("Invalid time: " + start.toLocaleTimeString() + " " + rowIndex);
+            if (schedule.slots[i].tutorId == profile.id || schedule.slots[i].bookerId == 0) {
+                var start = new Date(schedule.slots[i].startTime);
+                var rowIndex = start.getHours() * 12 + Math.floor(start.getMinutes() / 5) - 163;
+                var row = table.children[rowIndex + 1];
+                if (row) {
+                    var eventThingCont_1 = row.children[1].children[0];
+                    var subj_1 = "noSubject";
+                    var length_1 = (schedule.slots[i].endTime - schedule.slots[i].startTime) / 60000;
+                    var tutorProf = getTutor(schedule.slots[i].tutorId);
+                    tutorProf.then(function (profile) {
+                        eventThingCont_1.appendChild(generateEventNode(subj_1, profile.firstName + " " + profile.lastName.charAt(0), schedule.slots[i].tutorId, schedule.slots[i].slotId, length_1));
+                    }, function () {
+                        console.log("Failed to get tutor profile");
+                    });
+                }
+                else {
+                    console.log("Invalid time: " + start.toLocaleTimeString() + " " + rowIndex);
+                }
             }
         };
         for (var i = 0; i < schedule.slots.length; i++) {
@@ -309,7 +311,9 @@ function updateProfileUI(acc) {
 function submitAddSlot() {
     var start = document.querySelector("#startTime").value.split(":");
     var end = document.querySelector("#endTime").value.split(":");
-    account.addTutorSlot(profile.id, +start[0], +start[1], +end[0], +end[1], actualDay, actualMonth, actualYear, updateEventDisplay);
+    if (((60 * +start[0]) + +start[1]) >= 818 && ((60 * +end[0]) + +end[1]) <= 853) {
+        account.addTutorSlot(profile.id, +start[0], +start[1], +end[0], +end[1], actualDay, actualMonth, actualYear, updateEventDisplay);
+    }
 }
 function submitClear() {
     var toDel = [];

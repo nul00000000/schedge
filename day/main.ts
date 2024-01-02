@@ -247,21 +247,23 @@ function updateEventDisplay(schedule: Schedule) {
             row.children[1].children[0].innerHTML = "";
         }
         for(let i = 0; i < schedule.slots.length; i++) {
-            let start = new Date(schedule.slots[i].startTime);
-            let rowIndex = start.getHours() * 12 + Math.floor(start.getMinutes() / 5) - 163;
-            let row = table.children[rowIndex + 1];
-            if(row) {
-                let eventThingCont = row.children[1].children[0];
-                let subj = "noSubject";
-                let length = (schedule.slots[i].endTime - schedule.slots[i].startTime) / 60000;
-                let tutorProf = getTutor(schedule.slots[i].tutorId);
-                tutorProf.then((profile) => {
-                    eventThingCont.appendChild(generateEventNode(subj, profile.firstName + " " + profile.lastName.charAt(0), schedule.slots[i].tutorId, schedule.slots[i].slotId, length));
-                }, () => {
-                    console.log("Failed to get tutor profile");
-                });
-            } else {
-                console.log("Invalid time: " + start.toLocaleTimeString() + " " + rowIndex);
+            if(schedule.slots[i].tutorId == profile.id || schedule.slots[i].bookerId == 0) {
+                let start = new Date(schedule.slots[i].startTime);
+                let rowIndex = start.getHours() * 12 + Math.floor(start.getMinutes() / 5) - 163;
+                let row = table.children[rowIndex + 1];
+                if(row) {
+                    let eventThingCont = row.children[1].children[0];
+                    let subj = "noSubject";
+                    let length = (schedule.slots[i].endTime - schedule.slots[i].startTime) / 60000;
+                    let tutorProf = getTutor(schedule.slots[i].tutorId);
+                    tutorProf.then((profile) => {
+                        eventThingCont.appendChild(generateEventNode(subj, profile.firstName + " " + profile.lastName.charAt(0), schedule.slots[i].tutorId, schedule.slots[i].slotId, length));
+                    }, () => {
+                        console.log("Failed to get tutor profile");
+                    });
+                } else {
+                    console.log("Invalid time: " + start.toLocaleTimeString() + " " + rowIndex);
+                }
             }
         }
     }
@@ -307,7 +309,9 @@ function updateProfileUI(acc: Profile) {
 function submitAddSlot() {
     let start = (document.querySelector("#startTime") as HTMLSelectElement).value.split(":");
     let end = (document.querySelector("#endTime") as HTMLSelectElement).value.split(":");
-    account.addTutorSlot(profile.id, +start[0], +start[1], +end[0], +end[1], actualDay, actualMonth, actualYear, updateEventDisplay);
+    if(((60 * +start[0]) + +start[1]) >= 818 && ((60 * +end[0]) + +end[1]) <= 853) {
+        account.addTutorSlot(profile.id, +start[0], +start[1], +end[0], +end[1], actualDay, actualMonth, actualYear, updateEventDisplay);
+    }
 }
 
 function submitClear() {
