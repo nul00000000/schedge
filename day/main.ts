@@ -207,14 +207,14 @@ function updateCalender() {
     }
 }
 
-function generateEventNode(supject: string, tutor: string, minuteLength: number): HTMLDivElement {
+function generateEventNode(supject: string, tutor: string, tutorId: number, slotId: number, minuteLength: number): HTMLDivElement {
     let eventThing = document.createElement("div");
     eventThing.className = "slot " + supject;
     eventThing.style.height = (minuteLength / 1.92) + "vh";
     let tutorName = document.createElement("div");
     tutorName.textContent = tutor;
     eventThing.appendChild(tutorName);
-    eventThing.onclick = () => {location.href = "/slot"};
+    eventThing.onclick = () => {location.href = "/slot?slotId=" + slotId + "&tutorId=" + tutorId};
     return eventThing;
 }
 
@@ -256,7 +256,7 @@ function updateEventDisplay(schedule: Schedule) {
                 let length = (schedule.slots[i].endTime - schedule.slots[i].startTime) / 60000;
                 let tutorProf = getTutor(schedule.slots[i].tutorId);
                 tutorProf.then((profile) => {
-                    eventThingCont.appendChild(generateEventNode(subj, profile.firstName + " " + profile.lastName.charAt(0), length));
+                    eventThingCont.appendChild(generateEventNode(subj, profile.firstName + " " + profile.lastName.charAt(0), schedule.slots[i].tutorId, schedule.slots[i].slotId, length));
                 }, () => {
                     console.log("Failed to get tutor profile");
                 });

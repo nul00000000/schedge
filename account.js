@@ -12,9 +12,10 @@ var Subject;
     Subject[Subject["SCIENCE"] = 2] = "SCIENCE";
     Subject[Subject["ENGLISH"] = 3] = "ENGLISH";
     Subject[Subject["MISC"] = 4] = "MISC";
+    Subject[Subject["NONE"] = 5] = "NONE";
 })(Subject || (Subject = {}));
 var account = {
-    profileRequest: { type: "profile", params: [] },
+    profileRequest: { type: "profile" },
     isFormValid: function (email, pass, pass2) {
         if (email.includes("@") && email.slice(email.indexOf("@")).includes(".")) {
             return { msg: "Email already in use", code: LoginCode.USERNAME_TAKEN };
@@ -38,7 +39,7 @@ var account = {
         var data = JSON.stringify(account.profileRequest);
         xhr.send(data);
     },
-    addTutorSlot: function (subject, clas, startHour, startMinute, endHour, endMinute, callback) {
+    addTutorSlot: function (tutorId, startHour, startMinute, endHour, endMinute, day, month, year, callback) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -49,21 +50,17 @@ var account = {
         };
         var data = JSON.stringify({
             type: "addtutorslot",
-            params: [
-                {
-                    bookerId: 0,
-                    subject: subject,
-                    clas: clas,
-                    startHour: startHour,
-                    startMinute: startMinute,
-                    endHour: endHour,
-                    endMinute: endMinute
-                }
-            ]
+            slot: {
+                tutorId: tutorId,
+                bookerId: 0,
+                startTime: new Date(year, month, day, startHour, startMinute).getTime(),
+                endTime: new Date(year, month, day, endHour, endMinute).getTime()
+            },
+            startTime: new Date(year, month, day).getTime()
         });
         xhr.send(data);
     },
-    getSchedule: function (tutorId, callback) {
+    getSchedule: function (day, month, year, callback) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -74,9 +71,38 @@ var account = {
         };
         var data = JSON.stringify({
             type: "getschedule",
-            params: [
-                tutorId
-            ]
+            startTime: new Date(year, month, day).getTime()
+        });
+        xhr.send(data);
+    },
+    deleteSlots: function (ids, day, month, year, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/auth/req/", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                callback(JSON.parse(xhr.responseText));
+            }
+        };
+        var data = JSON.stringify({
+            type: "deleteslots",
+            ids: ids,
+            startTime: new Date(year, month, day).getTime()
+        });
+        xhr.send(data);
+    },
+    getTutorProfile: function (tutorId, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/auth/req/", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                callback(JSON.parse(xhr.responseText));
+            }
+        };
+        var data = JSON.stringify({
+            type: "tutorinfo",
+            tutorId: tutorId
         });
         xhr.send(data);
     }

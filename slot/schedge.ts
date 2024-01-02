@@ -12,27 +12,26 @@ type LoginState = { //would be export
     code: LoginCode;
 }
 
-type ServerRequest = {
-	type: string;
-	params: any[];
-}
-
 enum Subject {
     MATH, SOCIAL, SCIENCE, ENGLISH, MISC, NONE
 }
 
 type TutorSlot = {
+    slotId: number,
+    tutorId: number,
     bookerId: number,
-    subject: Subject,
-    clas: string,
-    startHour: number,
-    startMinute: number,
-    endHour: number,
-    endMinute: number
+    startTime: number,
+    endTime: number
 }
 
 type Schedule = {
     slots: TutorSlot[]
+    hashCode: number;
+}
+
+type Message = {
+    code: number;
+    message: string;
 }
 
 //TODO im thinking master schedule with everytthing
@@ -45,7 +44,7 @@ type Profile = {
 };
 
 let account = {
-    profileRequest: {type: "profile", params: []} as ServerRequest,
+    profileRequest: {type: "profile"},
     isFormValid(email: string, pass: string, pass2: string): LoginState { //would also be export
         if(email.includes("@") && email.slice(email.indexOf("@")).includes(".")) {
             return {msg: "Email already in use", code: LoginCode.USERNAME_TAKEN};
@@ -69,7 +68,7 @@ let account = {
         xhr.send(data);
     },
 
-    addTutorSlot(subject: Subject, clas: string, startHour: number, startMinute: number, endHour: number, endMinute: number, callback: (schedule: Schedule) => any) {
+    addTutorSlot(tutorId: number, startHour: number, startMinute: number, endHour: number, endMinute: number, day: number, month: number, year: number, callback: (schedule: Schedule) => any) {
         let xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -80,22 +79,18 @@ let account = {
         }
         let data = JSON.stringify({
             type: "addtutorslot",
-            params: [
-                {
+            slot: {
+                    tutorId: tutorId,
                     bookerId: 0,
-                    subject: subject,
-                    clas: clas,
-                    startHour: startHour,
-                    startMinute: startMinute,
-                    endHour: endHour,
-                    endMinute: endMinute
-                } as TutorSlot
-            ]
-        } as ServerRequest);
+                    startTime: new Date(year, month, day, startHour, startMinute).getTime(),
+                    endTime: new Date(year, month, day, endHour, endMinute).getTime(),
+                } as TutorSlot,
+            startTime: new Date(year, month, day).getTime()
+        });
         xhr.send(data);
     },
 
-    getSchedule(tutorId: number, callback: (schedule: Schedule) => any) {
+    getSchedule(day: number, month: number, year: number, callback: (schedule: Schedule) => any) {
         let xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -106,14 +101,12 @@ let account = {
         }
         let data = JSON.stringify({
             type: "getschedule",
-            params: [
-                tutorId
-            ]
-        } as ServerRequest);
+            startTime: new Date(year, month, day).getTime()
+        });
         xhr.send(data);
     },
 
-    clearSchedule(callback: (schedule: Schedule) => any) {
+    deleteSlots(ids: number[], day: number, month: number, year: number, callback: (schedule: Schedule) => any) {
         let xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -123,66 +116,161 @@ let account = {
             }
         }
         let data = JSON.stringify({
-            type: "clearschedule",
-            params: []
-        } as ServerRequest);
+            type: "deleteslots",
+            ids: ids,
+            startTime: new Date(year, month, day).getTime()
+        });
         xhr.send(data);
     },
 
-    getTutorProfile(tutorId: number, callback: (schedule: Schedule) => any) {
+    getTutorProfile(tutorId: number, callback: (profile: Profile) => any) {
         let xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onreadystatechange = function () {
             if(xhr.readyState === 4 && xhr.status === 200) {
-                callback(JSON.parse(xhr.responseText) as Schedule);
+                callback(JSON.parse(xhr.responseText) as Profile);
             }
         }
         let data = JSON.stringify({
             type: "tutorinfo",
-            params: [
-                tutorId
-            ]
-        } as ServerRequest);
+            tutorId: tutorId
+        });
         xhr.send(data);
     },
 
-    getAllTutors(callback: (schedule: Profile[]) => any) {
+    getTutorSlot(slotId: number, callback: (slot: TutorSlot) => any, errorCallback?: (message: Message) => any) {
         let xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onreadystatechange = function () {
             if(xhr.readyState === 4 && xhr.status === 200) {
-                callback(JSON.parse(xhr.responseText) as Profile[]);
+                let obj = JSON.parse(xhr.responseText);
+                if(!obj || "message" in obj) {
+                    if(errorCallback) {
+                        errorCallback(obj as Message);
+                    }
+                } else {
+                    callback(obj as TutorSlot);
+                }
             }
         }
         let data = JSON.stringify({
-            type: "gettutors",
-            params: []
-        } as ServerRequest);
+            type: "getslot",
+            slotId: slotId
+        });
         xhr.send(data);
     },
+
+    reserveTutorSlot(slotId: number, callback: (slot: TutorSlot) => any, errorCallback?: (message: Message) => any) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/auth/req/", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if(xhr.readyState === 4 && xhr.status === 200) {
+                let obj = JSON.parse(xhr.responseText);
+                if(!obj || "message" in obj) {
+                    if(errorCallback) {
+                        errorCallback(obj as Message);
+                    }
+                } else {
+                    callback(obj as TutorSlot);
+                }
+            }
+        }
+        let data = JSON.stringify({
+            type: "reserveslot",
+            slotId: slotId
+        });
+        xhr.send(data);
+    }
 
 };
 
 //real
 
-let loginCorner = document.querySelector("#loginCorner") as HTMLDivElement;
-let accountCorner = document.querySelector("#accountCorner") as HTMLDivElement;
+let loginCorner: HTMLDivElement;
+let accountCorner: HTMLDivElement;
 
-let loggedIn = document.querySelector("#loggedIn") as HTMLDivElement;
-let loggedOut = document.querySelector("#loggedOut") as HTMLDivElement;
+let loggedIn: HTMLDivElement;
+let loggedOut: HTMLDivElement;
 
-let openView = document.querySelector("#openView") as HTMLDivElement;
-let reservedView = document.querySelector("#reservedView") as HTMLDivElement;
-let selfReservedView = document.querySelector("#selfReservedView") as HTMLDivElement;
-
-let slotState = 0; //0 open, 1 taken, 2, self-taken
+let openView: HTMLDivElement;
+let reservedView: HTMLDivElement;
+let selfReservedView: HTMLDivElement;
 
 let profile: Profile;
+let loaded = false;
+
+let slot: TutorSlot;
+let tutor: Profile;
+
+function updateSlotUI(slot: TutorSlot) {
+    if(slot) {
+        let start = new Date(slot.startTime);
+        let end = new Date(slot.endTime);
+        document.querySelector("#times").textContent = start.toLocaleTimeString().replace(":00", "") + " - " + end.toLocaleTimeString().replace(":00", "");
+        document.querySelector("#date").textContent = start.toLocaleString('en-US', {weekday: 'long'}) + " " + start.toLocaleDateString();
+
+        if(profile) {
+            if(slot.bookerId == 0) {
+                openView.style.display = "block";
+                reservedView.style.display = "none";
+                selfReservedView.style.display = "none";
+            } else if(slot.bookerId == profile.id) {
+                openView.style.display = "none";
+                reservedView.style.display = "none";
+                selfReservedView.style.display = "block";
+            } else {
+                openView.style.display = "none";
+                reservedView.style.display = "block";
+                selfReservedView.style.display = "none";
+            }
+        }
+    } else {
+        (document.querySelector("#defaultView") as HTMLDivElement).style.display = "none";
+        (document.querySelector("#errorView") as HTMLDivElement).style.display = "block";
+    }
+}
+
+function updateTutorUI() {
+    document.querySelector("#tutorName").textContent = tutor.firstName + " " + tutor.lastName;
+}
+
+let urlParams = new URLSearchParams(window.location.search);
+account.getTutorSlot(+urlParams.get("slotId"), (_slot: TutorSlot) => {
+    slot = _slot;
+    if(loaded) {
+        updateSlotUI(slot);
+    }
+}, () => updateSlotUI(null));
+account.getTutorProfile(+urlParams.get("tutorId"), (_tutor: Profile) => {
+    tutor = _tutor;
+    if(loaded) {
+        updateTutorUI();
+    }
+});
 
 function onLoad() {
+    loaded = true;
+    if(slot) {
+        updateSlotUI(slot);
+    }
+    if(tutor) {
+        updateTutorUI();
+    }
 
+    loginCorner = document.querySelector("#loginCorner") as HTMLDivElement;
+    accountCorner = document.querySelector("#accountCorner") as HTMLDivElement;
+
+    loggedIn = document.querySelector("#loggedIn") as HTMLDivElement;
+    loggedOut = document.querySelector("#loggedOut") as HTMLDivElement;
+
+    openView = document.querySelector("#openView") as HTMLDivElement;
+    reservedView = document.querySelector("#reservedView") as HTMLDivElement;
+    selfReservedView = document.querySelector("#selfReservedView") as HTMLDivElement;
+
+    main();
 }
 
 function updateProfileUI(acc: Profile) {
@@ -193,19 +281,6 @@ function updateProfileUI(acc: Profile) {
         document.querySelector("#accountName").textContent = "Hi, " + acc.firstName + " " + acc.lastName;
         loggedIn.style.display = "block";
         loggedOut.style.display = "none";
-        if(slotState == 0) {
-            openView.style.display = "block";
-            reservedView.style.display = "none";
-            selfReservedView.style.display = "none";
-        } else if(slotState == 1) {
-            openView.style.display = "none";
-            reservedView.style.display = "block";
-            selfReservedView.style.display = "none";
-        } else if(slotState == 2) {
-            openView.style.display = "none";
-            reservedView.style.display = "none";
-            selfReservedView.style.display = "block";
-        }
     } else {
         loginCorner.style.display = "flex";
         accountCorner.style.display = "none";
@@ -215,13 +290,9 @@ function updateProfileUI(acc: Profile) {
 }
 
 function reserveSlot() {
-    //check if slot got taken already first
-    slotState = 2;
-    updateProfileUI(profile);
+    account.reserveTutorSlot(slot.slotId, updateSlotUI);
 }
 
 function main(): void {
-    account.requestProfile((acc: Profile) => {updateProfileUI(acc); this.profile = acc;});
+    account.requestProfile((acc: Profile) => {updateProfileUI(acc); profile = acc; updateSlotUI(slot)});
 }
-
-main();

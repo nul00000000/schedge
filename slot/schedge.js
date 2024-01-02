@@ -15,7 +15,7 @@ var Subject;
     Subject[Subject["NONE"] = 5] = "NONE";
 })(Subject || (Subject = {}));
 var account = {
-    profileRequest: { type: "profile", params: [] },
+    profileRequest: { type: "profile" },
     isFormValid: function (email, pass, pass2) {
         if (email.includes("@") && email.slice(email.indexOf("@")).includes(".")) {
             return { msg: "Email already in use", code: LoginCode.USERNAME_TAKEN };
@@ -39,7 +39,7 @@ var account = {
         var data = JSON.stringify(account.profileRequest);
         xhr.send(data);
     },
-    addTutorSlot: function (subject, clas, startHour, startMinute, endHour, endMinute, callback) {
+    addTutorSlot: function (tutorId, startHour, startMinute, endHour, endMinute, day, month, year, callback) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -50,21 +50,17 @@ var account = {
         };
         var data = JSON.stringify({
             type: "addtutorslot",
-            params: [
-                {
-                    bookerId: 0,
-                    subject: subject,
-                    clas: clas,
-                    startHour: startHour,
-                    startMinute: startMinute,
-                    endHour: endHour,
-                    endMinute: endMinute
-                }
-            ]
+            slot: {
+                tutorId: tutorId,
+                bookerId: 0,
+                startTime: new Date(year, month, day, startHour, startMinute).getTime(),
+                endTime: new Date(year, month, day, endHour, endMinute).getTime()
+            },
+            startTime: new Date(year, month, day).getTime()
         });
         xhr.send(data);
     },
-    getSchedule: function (tutorId, callback) {
+    getSchedule: function (day, month, year, callback) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -75,13 +71,11 @@ var account = {
         };
         var data = JSON.stringify({
             type: "getschedule",
-            params: [
-                tutorId
-            ]
+            startTime: new Date(year, month, day).getTime()
         });
         xhr.send(data);
     },
-    clearSchedule: function (callback) {
+    deleteSlots: function (ids, day, month, year, callback) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -91,8 +85,9 @@ var account = {
             }
         };
         var data = JSON.stringify({
-            type: "clearschedule",
-            params: []
+            type: "deleteslots",
+            ids: ids,
+            startTime: new Date(year, month, day).getTime()
         });
         xhr.send(data);
     },
@@ -107,38 +102,129 @@ var account = {
         };
         var data = JSON.stringify({
             type: "tutorinfo",
-            params: [
-                tutorId
-            ]
+            tutorId: tutorId
         });
         xhr.send(data);
     },
-    getAllTutors: function (callback) {
+    getTutorSlot: function (slotId, callback, errorCallback) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
-                callback(JSON.parse(xhr.responseText));
+                var obj = JSON.parse(xhr.responseText);
+                if (!obj || "message" in obj) {
+                    if (errorCallback) {
+                        errorCallback(obj);
+                    }
+                }
+                else {
+                    callback(obj);
+                }
             }
         };
         var data = JSON.stringify({
-            type: "gettutors",
-            params: []
+            type: "getslot",
+            slotId: slotId
+        });
+        xhr.send(data);
+    },
+    reserveTutorSlot: function (slotId, callback, errorCallback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/auth/req/", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var obj = JSON.parse(xhr.responseText);
+                if (!obj || "message" in obj) {
+                    if (errorCallback) {
+                        errorCallback(obj);
+                    }
+                }
+                else {
+                    callback(obj);
+                }
+            }
+        };
+        var data = JSON.stringify({
+            type: "reserveslot",
+            slotId: slotId
         });
         xhr.send(data);
     }
 };
-var loginCorner = document.querySelector("#loginCorner");
-var accountCorner = document.querySelector("#accountCorner");
-var loggedIn = document.querySelector("#loggedIn");
-var loggedOut = document.querySelector("#loggedOut");
-var openView = document.querySelector("#openView");
-var reservedView = document.querySelector("#reservedView");
-var selfReservedView = document.querySelector("#selfReservedView");
-var slotState = 0;
+var loginCorner;
+var accountCorner;
+var loggedIn;
+var loggedOut;
+var openView;
+var reservedView;
+var selfReservedView;
 var profile;
+var loaded = false;
+var slot;
+var tutor;
+function updateSlotUI(slot) {
+    if (slot) {
+        var start = new Date(slot.startTime);
+        var end = new Date(slot.endTime);
+        document.querySelector("#times").textContent = start.toLocaleTimeString().replace(":00", "") + " - " + end.toLocaleTimeString().replace(":00", "");
+        document.querySelector("#date").textContent = start.toLocaleString('en-US', { weekday: 'long' }) + " " + start.toLocaleDateString();
+        if (profile) {
+            if (slot.bookerId == 0) {
+                openView.style.display = "block";
+                reservedView.style.display = "none";
+                selfReservedView.style.display = "none";
+            }
+            else if (slot.bookerId == profile.id) {
+                openView.style.display = "none";
+                reservedView.style.display = "none";
+                selfReservedView.style.display = "block";
+            }
+            else {
+                openView.style.display = "none";
+                reservedView.style.display = "block";
+                selfReservedView.style.display = "none";
+            }
+        }
+    }
+    else {
+        document.querySelector("#defaultView").style.display = "none";
+        document.querySelector("#errorView").style.display = "block";
+    }
+}
+function updateTutorUI() {
+    document.querySelector("#tutorName").textContent = tutor.firstName + " " + tutor.lastName;
+}
+var urlParams = new URLSearchParams(window.location.search);
+account.getTutorSlot(+urlParams.get("slotId"), function (_slot) {
+    slot = _slot;
+    if (loaded) {
+        updateSlotUI(slot);
+    }
+}, function () { return updateSlotUI(null); });
+account.getTutorProfile(+urlParams.get("tutorId"), function (_tutor) {
+    tutor = _tutor;
+    if (loaded) {
+        updateTutorUI();
+    }
+});
 function onLoad() {
+    loaded = true;
+    if (slot) {
+        updateSlotUI(slot);
+    }
+    if (tutor) {
+        updateTutorUI();
+    }
+    loginCorner = document.querySelector("#loginCorner");
+    accountCorner = document.querySelector("#accountCorner");
+    loggedIn = document.querySelector("#loggedIn");
+    loggedOut = document.querySelector("#loggedOut");
+    openView = document.querySelector("#openView");
+    reservedView = document.querySelector("#reservedView");
+    selfReservedView = document.querySelector("#selfReservedView");
+    main();
 }
 function updateProfileUI(acc) {
     console.log(acc);
@@ -148,21 +234,6 @@ function updateProfileUI(acc) {
         document.querySelector("#accountName").textContent = "Hi, " + acc.firstName + " " + acc.lastName;
         loggedIn.style.display = "block";
         loggedOut.style.display = "none";
-        if (slotState == 0) {
-            openView.style.display = "block";
-            reservedView.style.display = "none";
-            selfReservedView.style.display = "none";
-        }
-        else if (slotState == 1) {
-            openView.style.display = "none";
-            reservedView.style.display = "block";
-            selfReservedView.style.display = "none";
-        }
-        else if (slotState == 2) {
-            openView.style.display = "none";
-            reservedView.style.display = "none";
-            selfReservedView.style.display = "block";
-        }
     }
     else {
         loginCorner.style.display = "flex";
@@ -172,11 +243,8 @@ function updateProfileUI(acc) {
     }
 }
 function reserveSlot() {
-    slotState = 2;
-    updateProfileUI(profile);
+    account.reserveTutorSlot(slot.slotId, updateSlotUI);
 }
 function main() {
-    var _this = this;
-    account.requestProfile(function (acc) { updateProfileUI(acc); _this.profile = acc; });
+    account.requestProfile(function (acc) { updateProfileUI(acc); profile = acc; updateSlotUI(slot); });
 }
-main();

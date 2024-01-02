@@ -215,14 +215,14 @@ function updateCalender() {
         e.className = "currentCell";
     }
 }
-function generateEventNode(supject, tutor, minuteLength) {
+function generateEventNode(supject, tutor, tutorId, slotId, minuteLength) {
     var eventThing = document.createElement("div");
     eventThing.className = "slot " + supject;
     eventThing.style.height = (minuteLength / 1.92) + "vh";
     var tutorName = document.createElement("div");
     tutorName.textContent = tutor;
     eventThing.appendChild(tutorName);
-    eventThing.onclick = function () { location.href = "/slot"; };
+    eventThing.onclick = function () { location.href = "/slot?slotId=" + slotId + "&tutorId=" + tutorId; };
     return eventThing;
 }
 function loadSchedule() {
@@ -260,7 +260,7 @@ function updateEventDisplay(schedule) {
                 var length_1 = (schedule.slots[i].endTime - schedule.slots[i].startTime) / 60000;
                 var tutorProf = getTutor(schedule.slots[i].tutorId);
                 tutorProf.then(function (profile) {
-                    eventThingCont_1.appendChild(generateEventNode(subj_1, profile.firstName + " " + profile.lastName.charAt(0), length_1));
+                    eventThingCont_1.appendChild(generateEventNode(subj_1, profile.firstName + " " + profile.lastName.charAt(0), schedule.slots[i].tutorId, schedule.slots[i].slotId, length_1));
                 }, function () {
                     console.log("Failed to get tutor profile");
                 });

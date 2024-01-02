@@ -12,28 +12,24 @@ type LoginState = { //would be export
     code: LoginCode;
 }
 
-type ServerRequest = {
-	type: string;
-	params: any[];
-}
-
 enum Subject {
-    MATH, SOCIAL, SCIENCE, ENGLISH, MISC
+    MATH, SOCIAL, SCIENCE, ENGLISH, MISC, NONE
 }
 
 type TutorSlot = {
+    slotId: number,
+    tutorId: number,
     bookerId: number,
-    subject: Subject,
-    clas: string,
-    startHour: number,
-    startMinute: number,
-    endHour: number,
-    endMinute: number
+    startTime: number,
+    endTime: number
 }
 
 type Schedule = {
     slots: TutorSlot[]
+    hashCode: number;
 }
+
+//TODO im thinking master schedule with everytthing
 
 type Profile = {
 	id: number,
@@ -43,7 +39,7 @@ type Profile = {
 };
 
 let account = {
-    profileRequest: {type: "profile", params: []} as ServerRequest,
+    profileRequest: {type: "profile"},
     isFormValid(email: string, pass: string, pass2: string): LoginState { //would also be export
         if(email.includes("@") && email.slice(email.indexOf("@")).includes(".")) {
             return {msg: "Email already in use", code: LoginCode.USERNAME_TAKEN};
@@ -67,7 +63,7 @@ let account = {
         xhr.send(data);
     },
 
-    addTutorSlot(subject: Subject, clas: string, startHour: number, startMinute: number, endHour: number, endMinute: number, callback: (schedule: Schedule) => any) {
+    addTutorSlot(tutorId: number, startHour: number, startMinute: number, endHour: number, endMinute: number, day: number, month: number, year: number, callback: (schedule: Schedule) => any) {
         let xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -78,22 +74,18 @@ let account = {
         }
         let data = JSON.stringify({
             type: "addtutorslot",
-            params: [
-                {
+            slot: {
+                    tutorId: tutorId,
                     bookerId: 0,
-                    subject: subject,
-                    clas: clas,
-                    startHour: startHour,
-                    startMinute: startMinute,
-                    endHour: endHour,
-                    endMinute: endMinute
-                } as TutorSlot
-            ]
-        } as ServerRequest);
+                    startTime: new Date(year, month, day, startHour, startMinute).getTime(),
+                    endTime: new Date(year, month, day, endHour, endMinute).getTime(),
+                } as TutorSlot,
+            startTime: new Date(year, month, day).getTime()
+        });
         xhr.send(data);
     },
 
-    getSchedule(tutorId: number, callback: (schedule: Schedule) => any) {
+    getSchedule(day: number, month: number, year: number, callback: (schedule: Schedule) => any) {
         let xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -104,10 +96,41 @@ let account = {
         }
         let data = JSON.stringify({
             type: "getschedule",
-            params: [
-                tutorId
-            ]
-        } as ServerRequest);
+            startTime: new Date(year, month, day).getTime()
+        });
+        xhr.send(data);
+    },
+
+    deleteSlots(ids: number[], day: number, month: number, year: number, callback: (schedule: Schedule) => any) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/auth/req/", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if(xhr.readyState === 4 && xhr.status === 200) {
+                callback(JSON.parse(xhr.responseText) as Schedule);
+            }
+        }
+        let data = JSON.stringify({
+            type: "deleteslots",
+            ids: ids,
+            startTime: new Date(year, month, day).getTime()
+        });
+        xhr.send(data);
+    },
+
+    getTutorProfile(tutorId: number, callback: (profile: Profile) => any) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/auth/req/", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if(xhr.readyState === 4 && xhr.status === 200) {
+                callback(JSON.parse(xhr.responseText) as Profile);
+            }
+        }
+        let data = JSON.stringify({
+            type: "tutorinfo",
+            tutorId: tutorId
+        });
         xhr.send(data);
     }
 
