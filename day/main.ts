@@ -248,13 +248,18 @@ function updateEventDisplay(schedule: Schedule) {
             row.children[1].children[0].innerHTML = "";
         }
         for(let i = 0; i < schedule.slots.length; i++) {
-            if(schedule.slots[i].tutorId == profile.id || schedule.slots[i].bookerId == 0) {
+            if(schedule.slots[i].bookerId == profile.id || schedule.slots[i].tutorId == profile.id || schedule.slots[i].bookerId == 0) {
                 let start = new Date(schedule.slots[i].startTime);
                 let rowIndex = start.getHours() * 12 + Math.floor(start.getMinutes() / 5) - 163;
                 let row = table.children[rowIndex + 1];
                 if(row) {
                     let eventThingCont = row.children[1].children[0];
-                    let subj = schedule.slots[i].tutorId == profile.id ? "misc" : "noSubject";
+                    let subj = "noSubject";
+                    if(schedule.slots[i].tutorId == profile.id) {
+                        subj = "misc";
+                    } else if(schedule.slots[i].bookerId == profile.id) {
+                        subj = "science";
+                    }
                     let length = (schedule.slots[i].endTime - schedule.slots[i].startTime) / 60000;
                     let tutorProf = getTutor(schedule.slots[i].tutorId);
                     tutorProf.then((profile) => {

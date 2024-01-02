@@ -251,13 +251,19 @@ function updateEventDisplay(schedule) {
             row.children[1].children[0].innerHTML = "";
         }
         var _loop_2 = function (i) {
-            if (schedule.slots[i].tutorId == profile.id || schedule.slots[i].bookerId == 0) {
+            if (schedule.slots[i].bookerId == profile.id || schedule.slots[i].tutorId == profile.id || schedule.slots[i].bookerId == 0) {
                 var start = new Date(schedule.slots[i].startTime);
                 var rowIndex = start.getHours() * 12 + Math.floor(start.getMinutes() / 5) - 163;
                 var row = table.children[rowIndex + 1];
                 if (row) {
                     var eventThingCont_1 = row.children[1].children[0];
-                    var subj_1 = schedule.slots[i].tutorId == profile.id ? "misc" : "noSubject";
+                    var subj_1 = "noSubject";
+                    if (schedule.slots[i].tutorId == profile.id) {
+                        subj_1 = "misc";
+                    }
+                    else if (schedule.slots[i].bookerId == profile.id) {
+                        subj_1 = "science";
+                    }
                     var length_1 = (schedule.slots[i].endTime - schedule.slots[i].startTime) / 60000;
                     var tutorProf = getTutor(schedule.slots[i].tutorId);
                     tutorProf.then(function (profile) {

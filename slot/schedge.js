@@ -151,6 +151,29 @@ var account = {
             slotId: slotId
         });
         xhr.send(data);
+    },
+    unreserveTutorSlot: function (slotId, callback, errorCallback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/auth/req/", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var obj = JSON.parse(xhr.responseText);
+                if (!obj || "message" in obj) {
+                    if (errorCallback) {
+                        errorCallback(obj);
+                    }
+                }
+                else {
+                    callback(obj);
+                }
+            }
+        };
+        var data = JSON.stringify({
+            type: "unreserveslot",
+            slotId: slotId
+        });
+        xhr.send(data);
     }
 };
 var loginCorner;
@@ -259,6 +282,9 @@ function deleteSlot() {
 }
 function reserveSlot() {
     account.reserveTutorSlot(slot.slotId, updateSlotUI);
+}
+function unreserveSlot() {
+    account.unreserveTutorSlot(slot.slotId, updateSlotUI);
 }
 function main() {
     account.requestProfile(function (acc) { updateProfileUI(acc); profile = acc; updateSlotUI(slot); });

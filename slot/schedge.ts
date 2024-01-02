@@ -183,6 +183,29 @@ let account = {
             slotId: slotId
         });
         xhr.send(data);
+    }, 
+
+    unreserveTutorSlot(slotId: number, callback: (slot: TutorSlot) => any, errorCallback?: (message: Message) => any) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/auth/req/", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if(xhr.readyState === 4 && xhr.status === 200) {
+                let obj = JSON.parse(xhr.responseText);
+                if(!obj || "message" in obj) {
+                    if(errorCallback) {
+                        errorCallback(obj as Message);
+                    }
+                } else {
+                    callback(obj as TutorSlot);
+                }
+            }
+        }
+        let data = JSON.stringify({
+            type: "unreserveslot",
+            slotId: slotId
+        });
+        xhr.send(data);
     }
 
 };
@@ -306,6 +329,10 @@ function deleteSlot() {
 
 function reserveSlot() {
     account.reserveTutorSlot(slot.slotId, updateSlotUI);
+}
+
+function unreserveSlot() {
+    account.unreserveTutorSlot(slot.slotId, updateSlotUI);
 }
 
 function main(): void {
