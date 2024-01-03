@@ -1,0 +1,123 @@
+:root {
+    --monke-green: #7CCF98;
+    --monke-green-hover: #66ac7d;
+    --monke-green-active: #5ea074;
+    --monke-green-border: #4d805e;
+    --empty-brown: #968254;
+    --full-brown: #e2d2af;
+    --selected-brown: #f7edd9;
+    --background-color: lightgrey;
+}
+
+body {
+    background-color: var(--background-color);
+    text-align: center;
+    /* font-family: Consolas, monaco, monospace;  */
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 2vh;
+    overflow: hidden;
+}
+
+.accountPanel {
+    display: block;
+    border-radius: 1vh;
+    font-size: 2vh;
+}
+
+#funnyContainer {
+    display: flex;
+    flex-direction: row;
+    column-gap: 1vh;
+}
+
+#labelContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: end;
+    row-gap: 1vh;
+}
+
+#inputContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    row-gap: 1vh;
+}
+
+#bio {
+    resize: none;
+    height: 29vh;
+}
+
+#createAccountPanel label {
+    margin-top: 0.5vh;
+    margin-bottom: 0.5vh;
+}
+
+#loginPanel {
+    display: block;
+}
+
+#createAccountPanel {
+    display: flex;
+    position: relative;
+    top: 18vh;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#profilePanel {
+    display: none;
+}
+
+.textEntry {
+    width: 50vh;
+    height: 3vh;
+}
+
+#loginSubmit {
+    position: relative;
+    top: 1vh;
+    width: 50vh;
+    height: 3vh;
+}
+
+#caSubmit {
+    position: relative;
+    top: 1vh;
+    width: 50vh;
+    height: 3vh;
+}
+
+#username {
+    font-weight: bold;
+}
+
+div.accountPanel {
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#updateConfirmation {
+    transform: translateY(100%);
+    /* animation-name: confirmFade;
+    animation-duration: 2s;
+    animation-delay: 2s;
+    animation-fill-mode: forwards; */
+}
+
+@keyframes confirmFade {
+    from {
+        opacity: 100%;
+        display: block;
+    }
+
+    to {
+        opacity: 0%;
+        display: none;
+    }
+}

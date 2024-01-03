@@ -3,6 +3,7 @@
     <head>
         <title>Day Schedule</title>
         <link rel="stylesheet" href="main.css">
+        <link rel="stylesheet" href="../universal.css">
     </head>
     <body onload="onLoad()">
         <div id="header">
@@ -13,7 +14,10 @@
             </div>
             <div id="accountCorner">
                 <div id="accountName" class="header">Poo Haver</div>
-                <button id="toAppButton" class="header" onclick="location.href='/app'">Go to App</button>
+                <div id="profileButtons">
+                    <button id="toProfileButton" class="header" onclick="location.href='/profile'">Profile</button>
+                    <button id="toAppButton" class="header" onclick="location.href='/app'">Go to App</button>
+                </div>
             </div>
         </div>
         <div id="tutorControl" style="display: none;">

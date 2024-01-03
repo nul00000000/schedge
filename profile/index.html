@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="main.css">
+        <link rel="stylesheet" href="../universal.css">
+        <title>Schedge</title>
+        <script src="schedge.js"></script>
+    </head>
+    <body onload="onLoad()">
+        <div id="header">
+            <p id="title" class="header">Schedge</p>
+            <div id="loginCorner" style="display: none;">
+                <button id="loginButton" class="header" onclick="location.href='/login'">Sign In</button>
+                <button id="createButton" class="header" onclick="location.href='/login'">Sign Up</button>
+            </div>
+            <div id="accountCorner" style="display: none;">
+                <div id="accountName" class="header">Poo Haver</div>
+                <div id="profileButtons">
+                    <button id="toProfileButton" class="header" onclick="location.href='/profile'">Profile</button>
+                    <button id="toAppButton" class="header" onclick="location.href='/app'">Go to App</button>
+                </div>
+            </div>
+        </div>
+        <div id="mainContainer">
+            <div id="createAccountPanel">
+                <label class="accountPanel"><b>Profile Info</b></label>
+                <br>
+                <div id="funnyContainer">
+                    <div id="labelContainer">
+                        <label for="first">First Name</label>
+                        <label for="last">Last Name</label>
+                        <label for="bio">Bio</label>
+                    </div>
+                    <div id="inputContainer">
+                        <input type="text" id="first" class="accountPanel textEntry" maxlength="32" name="first" autocomplete="off" placeholder="First Name">
+                        <input type="text" id="last" class="accountPanel textEntry" maxlength="32" name="last" autocomplete="off" placeholder="Last Name">
+                        <textarea id="bio" class="accountPanel textEntry" maxlength="540" name="bio" autocomplete="off" placeholder="What do you tutor in? What are your favorite classes? What type of train could you win a fight against?"></textarea>
+                    </div>
+                </div>
+                <button id="caSubmit" class="accountPanel" onclick="updateProfile()">Update Profile</button>
+                <div id="updateConfirmation" style="display: none;">Profiled Updated!</div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -109,8 +109,10 @@ function setText() {
         incPass.style.visibility = "visible";
     }
 }
-var createForm = document.querySelector("#createAccountPanel");
-createForm.onsubmit = function () {
-    return account.isFormValid(createForm.children[0].value, createForm.children[3].value, createForm.children[4].value);
-};
-setText();
+function onLoad() {
+    var createForm = document.querySelector("#createAccountPanel");
+    createForm.onsubmit = function () {
+        return account.isFormValid(createForm.children[0].value, createForm.children[3].value, createForm.children[4].value);
+    };
+    setText();
+}

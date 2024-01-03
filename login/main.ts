@@ -139,11 +139,13 @@ function setText(): void {
 	}
 }
 
-let createForm = (document.querySelector("#createAccountPanel") as HTMLFormElement);
-createForm.onsubmit = () => {
-    return account.isFormValid((createForm.children[0] as HTMLInputElement).value,
-        (createForm.children[3] as HTMLInputElement).value,
-        (createForm.children[4] as HTMLInputElement).value);
-};
+function onLoad(): void {
+    let createForm = (document.querySelector("#createAccountPanel") as HTMLFormElement);
+    createForm.onsubmit = () => {
+        return account.isFormValid((createForm.children[0] as HTMLInputElement).value,
+            (createForm.children[3] as HTMLInputElement).value,
+            (createForm.children[4] as HTMLInputElement).value);
+    };
 
-setText();
+    setText();
+}

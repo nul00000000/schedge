@@ -2,7 +2,8 @@
 <html>
     <head>
         <link rel="stylesheet" href="main.css">
-        <title>Schedge</title>
+        <link rel="stylesheet" href="../universal.css">
+        <title>Tutor Slot</title>
         <script src="schedge.js"></script>
     </head>
     <body onload="onLoad()">
@@ -14,7 +15,10 @@
             </div>
             <div id="accountCorner">
                 <div id="accountName" class="header">Poo Haver</div>
-                <button id="toAppButton" class="header" onclick="location.href='/app'">Go to App</button>
+                <div id="profileButtons">
+                    <button id="toProfileButton" class="header" onclick="location.href='/profile'">Profile</button>
+                    <button id="toAppButton" class="header" onclick="location.href='/app'">Go to App</button>
+                </div>
             </div>
         </div>
         <div id="mainContainer">
