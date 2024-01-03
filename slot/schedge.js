@@ -276,9 +276,12 @@ function updateProfileUI(acc) {
         loggedOut.style.display = "block";
     }
 }
-function deleteSlot() {
+function backToDay() {
     var d = new Date(slot.startTime);
-    account.deleteSlots([slot.slotId], function () { location.href = "/day/?day=" + d.getDate() + "&month=" + d.getMonth() + " &year=" + d.getFullYear(); });
+    location.href = "/day/?day=" + d.getDate() + "&month=" + d.getMonth() + " &year=" + d.getFullYear();
+}
+function deleteSlot() {
+    account.deleteSlots([slot.slotId], backToDay);
 }
 function reserveSlot() {
     account.reserveTutorSlot(slot.slotId, updateSlotUI);

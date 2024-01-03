@@ -322,9 +322,13 @@ function updateProfileUI(acc: Profile) {
     }
 }
 
-function deleteSlot() {
+function backToDay() {
     let d = new Date(slot.startTime);
-    account.deleteSlots([slot.slotId], () => {location.href="/day/?day=" + d.getDate() + "&month=" + d.getMonth() + " &year=" + d.getFullYear()});
+    location.href="/day/?day=" + d.getDate() + "&month=" + d.getMonth() + " &year=" + d.getFullYear();
+}
+
+function deleteSlot() {
+    account.deleteSlots([slot.slotId], backToDay);
 }
 
 function reserveSlot() {
