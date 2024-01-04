@@ -231,12 +231,22 @@ function updateSlotUI(slot) {
 }
 function updateTutorUI() {
     document.querySelector("#tutorName").textContent = tutor.firstName + " " + tutor.lastName;
-    var bio = document.querySelector("#tutorBio");
-    bio.innerHTML = "";
-    var lines = tutor.tutorInfo.bio.split("\n");
-    for (var i = 0; i < lines.length; i++) {
-        bio.append(lines[i]);
-        bio.appendChild(document.createElement("br"));
+    if (profile) {
+        if (tutor.id != profile.id) {
+            var bio = document.querySelector("#tutorBio");
+            bio.innerHTML = "";
+            var lines = tutor.tutorInfo.bio.split("\n");
+            for (var i = 0; i < lines.length; i++) {
+                bio.append(lines[i]);
+                bio.appendChild(document.createElement("br"));
+            }
+            document.querySelector("#bioContainer").style.display = "unset";
+            document.querySelector("#infoContainer").style.display = "unset";
+        }
+        else {
+            document.querySelector("#bioContainer").style.display = "none";
+            document.querySelector("#infoContainer").style.display = "none";
+        }
     }
 }
 var urlParams = new URLSearchParams(window.location.search);
@@ -304,5 +314,5 @@ function updateReserveButtonDisabledness() {
     document.querySelector("#reserveButton").disabled = !((document.querySelector("#first").value.trim().length > 2) && (document.querySelector("#last").value.trim().length > 0));
 }
 function main() {
-    account.requestProfile(function (acc) { updateProfileUI(acc); profile = acc; updateSlotUI(slot); });
+    account.requestProfile(function (acc) { updateProfileUI(acc); profile = acc; updateSlotUI(slot); updateTutorUI(); });
 }
