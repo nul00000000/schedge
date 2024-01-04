@@ -273,21 +273,12 @@ function updateSlotUI(slot: TutorSlot) {
 
 function updateTutorUI() {
 	document.querySelector("#tutorName").textContent = tutor.firstName + " " + tutor.lastName;
-	if(profile) {
-		if(tutor.id != profile.id) {
-			let bio = document.querySelector("#tutorBio") as HTMLDivElement;
-			bio.innerHTML = "";
-			let lines = tutor.tutorInfo.bio.split("\n");
-			for(let i = 0; i < lines.length; i++) {
-				bio.append(lines[i]);
-				bio.appendChild(document.createElement("br"));
-			}
-			(document.querySelector("#bioContainer") as HTMLDivElement).style.display = "unset";
-			(document.querySelector("#infoContainer") as HTMLDivElement).style.display = "unset";
-		} else {
-			(document.querySelector("#bioContainer") as HTMLDivElement).style.display = "none";
-			(document.querySelector("#infoContainer") as HTMLDivElement).style.display = "none";
-		}
+	let bio = document.querySelector("#tutorBio") as HTMLDivElement;
+	bio.innerHTML = "";
+	let lines = tutor.tutorInfo.bio.split("\n");
+	for(let i = 0; i < lines.length; i++) {
+		bio.append(lines[i]);
+		bio.appendChild(document.createElement("br"));
 	}
 }
 
@@ -371,5 +362,5 @@ function updateReserveButtonDisabledness() {
 }
 
 function main(): void {
-	account.requestProfile((acc: Profile) => {updateProfileUI(acc); profile = acc; updateSlotUI(slot); updateTutorUI();});
+	account.requestProfile((acc: Profile) => {updateProfileUI(acc); profile = acc; updateSlotUI(slot);});
 }
