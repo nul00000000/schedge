@@ -23,35 +23,57 @@
         </div>
         <div id="mainContainer">
             <div id="loggedIn" style="display: none;">
-                <div id="defaultView" style="display: block;">
-                    <h1>Tutor Slot</h1>
-                    <h2 id="tutorName">Tutor McTutorFace</h2>
-                    <h3 id="times">1:38 - 2:14</h3>
-                    <h3 id="date">Monday 12/18/2023</h3>
-                    <br>
-                </div>
-                <div id="errorView" style="display: none;">
-                    <h1>An error occured, this slot no longer exists</h1>
-                    <button class="schedgeButton" onclick="backToDay()">Back to Day Sheet</button>
-                </div>
-                <div id="openView" style="display: none;">
-                    <h2 type="status">This slot is Open</h2>
-                    <button class="schedgeButton" onclick="reserveSlot()">Reserve this slot</button>
-                    <button class="schedgeButton" onclick="backToDay()">Back to Day Sheet</button>
-                </div>
-                <div id="selfReservedView" style="display: none;">
-                    <h2 type="status">This slot is Reserved by you</h2>
-                    <button class="schedgeButton" onclick="unreserveSlot()">Cancel Reservation</button>
-                    <button class="schedgeButton" onclick="backToDay()">Back to Day Sheet</button>
-                </div>
-                <div id="reservedView" style="display: none;">
-                    <h2 type="status">This slot is Reserved</h2>
-                    <button class="schedgeButton" onclick="backToDay()">Back to Day Sheet</button>
-                </div>
-                <div id="ownerView" style="display: none;">
-                    <h2 type="status">This slot is owned by you</h2>
-                    <button class="schedgeButton" onclick="deleteSlot()">Delete Slot</button>
-                    <button class="schedgeButton" onclick="backToDay()">Back to Day Sheet</button>
+                <div id="defaultView">
+                    <div class="evenSpace">
+                        <h1>Tutor Bio</h1>
+                        <h3 id="tutorBio"></h3>
+                    </div>
+                    <div class="evenSpace">
+                        <h1>Tutor Slot</h1>
+                        <h2 id="tutorName">Tutor McTutorFace</h2>
+                        <h3 id="times">1:38 - 2:14</h3>
+                        <h3 id="date">Monday 12/18/2023</h3>
+                        <br>
+                        <div id="errorView" style="display: none;">
+                            <h1>An error occured, this slot no longer exists</h1>
+                            <button class="schedgeButton" onclick="backToDay()">Back to Day Sheet</button>
+                        </div>
+                        <div id="openView" style="display: none;">
+                            <h2 type="status">This slot is Open</h2>
+                            <div id="funnyContainer">
+                                <div id="labelContainer">
+                                    <label for="first">Room #</label>
+                                    <label for="last">Class</label>
+                                    <label for="bio">Note</label>
+                                </div>
+                                <div id="inputContainer">
+                                    <input type="text" id="first" oninput="updateReserveButtonDisabledness()" class="accountPanel textEntry" maxlength="4" name="first" autocomplete="off" placeholder="What room will this session be in?">
+                                    <input type="text" id="last" oninput="updateReserveButtonDisabledness()" class="accountPanel textEntry" maxlength="32" name="last" autocomplete="off" placeholder="What class do you need help in?">
+                                    <textarea id="bio" class="accountPanel textEntry" maxlength="540" name="bio" autocomplete="off" placeholder="Anything else you want to let your tutor know? (Optional)"></textarea>
+                                </div>
+                            </div>
+                            <button class="schedgeButton" id="reserveButton" onclick="reserveSlot()" disabled>Reserve this slot</button>
+                            <button class="schedgeButton" onclick="backToDay()">Back to Day Sheet</button>
+                        </div>
+                        <div id="selfReservedView" style="display: none;">
+                            <h2 type="status">This slot is Reserved by you</h2>
+                            <button class="schedgeButton" onclick="unreserveSlot()">Cancel Reservation</button>
+                            <button class="schedgeButton" onclick="backToDay()">Back to Day Sheet</button>
+                        </div>
+                        <div id="reservedView" style="display: none;">
+                            <h2 type="status">This slot is Reserved</h2>
+                            <button class="schedgeButton" onclick="backToDay()">Back to Day Sheet</button>
+                        </div>
+                        <div id="ownerView" style="display: none;">
+                            <h2 type="status">This slot is owned by you</h2>
+                            <button class="schedgeButton" onclick="deleteSlot()">Delete Slot</button>
+                            <button class="schedgeButton" onclick="backToDay()">Back to Day Sheet</button>
+                        </div>
+                    </div>
+                    <div class="evenSpace">
+                        <h1>Tutor Info</h1>
+                        <h3>Right now there's nothing here but there will be soon :)</h3>
+                    </div>
                 </div>
             </div>
             <div id="loggedOut" style="display: none;">

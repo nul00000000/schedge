@@ -210,9 +210,10 @@ function onLoad() {
 function updateProfile() {
     account.updateProfile({
         id: profile.id,
-        firstName: profile.firstName,
-        lastName: profile.lastName,
-        tutorInfo: { bio: document.querySelector("#bio").value }
+        firstName: document.querySelector("#first").value,
+        lastName: document.querySelector("#last").value,
+        tutorInfo: { bio: document.querySelector("#bio").value },
+        tutorType: profile.tutorType
     }, function (acc) {
         var updateConfirmation = document.querySelector("#updateConfirmation");
         updateConfirmation.style.display = "block";

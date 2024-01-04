@@ -129,7 +129,7 @@ var account = {
         });
         xhr.send(data);
     },
-    reserveTutorSlot: function (slotId, callback, errorCallback) {
+    reserveTutorSlot: function (slotId, room, clazz, note, callback, errorCallback) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/auth/req/", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -148,7 +148,10 @@ var account = {
         };
         var data = JSON.stringify({
             type: "reserveslot",
-            slotId: slotId
+            slotId: slotId,
+            room: room,
+            clazz: clazz,
+            note: note
         });
         xhr.send(data);
     },
@@ -223,11 +226,18 @@ function updateSlotUI(slot) {
     }
     else {
         document.querySelector("#defaultView").style.display = "none";
-        document.querySelector("#errorView").style.display = "block";
+        document.querySelector("#errorView").style.display = "unset";
     }
 }
 function updateTutorUI() {
     document.querySelector("#tutorName").textContent = tutor.firstName + " " + tutor.lastName;
+    var bio = document.querySelector("#tutorBio");
+    bio.innerHTML = "";
+    var lines = tutor.tutorInfo.bio.split("\n");
+    for (var i = 0; i < lines.length; i++) {
+        bio.append(lines[i]);
+        bio.appendChild(document.createElement("br"));
+    }
 }
 var urlParams = new URLSearchParams(window.location.search);
 account.getTutorSlot(+urlParams.get("slotId"), function (_slot) {
@@ -284,10 +294,14 @@ function deleteSlot() {
     account.deleteSlots([slot.slotId], backToDay);
 }
 function reserveSlot() {
-    account.reserveTutorSlot(slot.slotId, updateSlotUI);
+    account.reserveTutorSlot(slot.slotId, document.querySelector("#first").value.trim(), document.querySelector("#last").value.trim(), document.querySelector("#bio").value.trim(), updateSlotUI);
 }
 function unreserveSlot() {
     account.unreserveTutorSlot(slot.slotId, updateSlotUI);
+}
+function updateReserveButtonDisabledness() {
+    console.log(document.querySelector("#first").value.trim().length + " " + document.querySelector("#last").value.trim().length);
+    document.querySelector("#reserveButton").disabled = !((document.querySelector("#first").value.trim().length > 2) && (document.querySelector("#last").value.trim().length > 0));
 }
 function main() {
     account.requestProfile(function (acc) { updateProfileUI(acc); profile = acc; updateSlotUI(slot); });

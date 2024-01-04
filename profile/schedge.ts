@@ -42,7 +42,8 @@ type Profile = {
 	id: number,
 	firstName: string,
 	lastName: string,
-    tutorInfo: TutorInfo
+    tutorInfo: TutorInfo,
+    tutorType: number
 };
 
 let account = {
@@ -252,9 +253,10 @@ function onLoad() {
 function updateProfile() {
     account.updateProfile({
         id: profile.id,
-        firstName: profile.firstName,
-        lastName: profile.lastName,
-        tutorInfo: {bio: (document.querySelector("#bio") as HTMLTextAreaElement).value} as TutorInfo
+        firstName: (document.querySelector("#first") as HTMLInputElement).value,
+        lastName: (document.querySelector("#last") as HTMLInputElement).value,
+        tutorInfo: {bio: (document.querySelector("#bio") as HTMLTextAreaElement).value} as TutorInfo,
+        tutorType: profile.tutorType
     } as Profile, (acc) => {
         let updateConfirmation = document.querySelector("#updateConfirmation") as HTMLDivElement;
         updateConfirmation.style.display = "block";

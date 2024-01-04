@@ -211,12 +211,17 @@ body {
     overflow: hidden;
     text-align: center;
 }
+
 .schedgeButton:hover {
     background-color: #dad1c0;
 }
 
 .schedgeButton:active {
     background-color: #cfc7b7;
+}
+
+.schedgeButton:disabled {
+    background-color: #c9c4b8;
 }
 
 .slotBubble {
@@ -291,4 +296,61 @@ body {
 
 .timeInput input {
     width: 2ch;
+}
+
+#defaultView {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.evenSpace {
+    width: 30vw;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#funnyContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    column-gap: 1vh;
+    margin-bottom: 2vh;
+}
+
+#labelContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: end;
+    row-gap: 1vh;
+}
+
+#inputContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    row-gap: 1vh;
+}
+
+#bio {
+    resize: none;
+    height: 15vh;
+}
+
+.textEntry {
+    width: 40vh;
+    height: 3vh;
+}
+
+.accountPanel {
+    display: block;
+    border-radius: 1vh;
+    font-size: 2vh;
+}
+
+#funnyContainer label {
+    margin-top: 0.5vh;
+    margin-bottom: 0.5vh;
 }
