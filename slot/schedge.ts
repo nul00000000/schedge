@@ -165,7 +165,7 @@ let account = {
 		xhr.send(data);
 	},
 
-	reserveTutorSlot(slotId: number, room: string, clazz: string, note: string, callback: (slot: TutorSlot) => any, errorCallback?: (message: Message) => any) {
+	reserveTutorSlot(slotId: number, room: string, teacher: string, clazz: string, note: string, callback: (slot: TutorSlot) => any, errorCallback?: (message: Message) => any) {
 		let xhr = new XMLHttpRequest();
 		xhr.open("POST", "/auth/req/", true);
 		xhr.setRequestHeader("Content-Type", "application/json");
@@ -185,6 +185,7 @@ let account = {
 			type: "reserveslot",
 			slotId: slotId,
 			room: room,
+			teacher: teacher,
 			clazz: clazz,
 			note: note
 		});
@@ -347,6 +348,7 @@ function deleteSlot() {
 function reserveSlot() {
 	account.reserveTutorSlot(slot.slotId, 
 		(document.querySelector("#first") as HTMLInputElement).value.trim(), 
+		(document.querySelector("#teacher") as HTMLInputElement).value.trim(), 
 		(document.querySelector("#last") as HTMLInputElement).value.trim(), 
 		(document.querySelector("#bio") as HTMLTextAreaElement).value.trim(), 
 		updateSlotUI);
@@ -358,7 +360,9 @@ function unreserveSlot() {
 
 function updateReserveButtonDisabledness() {
 	console.log((document.querySelector("#first") as HTMLInputElement).value.trim().length + " " + (document.querySelector("#last") as HTMLInputElement).value.trim().length);
-	(document.querySelector("#reserveButton") as HTMLButtonElement).disabled = !(((document.querySelector("#first") as HTMLInputElement).value.trim().length > 2) && ((document.querySelector("#last") as HTMLInputElement).value.trim().length > 0));
+	(document.querySelector("#reserveButton") as HTMLButtonElement).disabled = !(((document.querySelector("#first") as HTMLInputElement).value.trim().length > 2) && 
+			((document.querySelector("#last") as HTMLInputElement).value.trim().length > 0) &&
+			((document.querySelector("#teacher") as HTMLInputElement).value.indexOf("@") > -1));
 }
 
 function main(): void {

@@ -43,11 +43,13 @@
                             <div id="funnyContainer">
                                 <div id="labelContainer">
                                     <label for="first">Room #</label>
+                                    <label for="teacher">Teacher Email</label>
                                     <label for="last">Class</label>
                                     <label for="bio">Note</label>
                                 </div>
                                 <div id="inputContainer">
                                     <input type="text" id="first" oninput="updateReserveButtonDisabledness()" class="accountPanel textEntry" maxlength="4" name="first" autocomplete="off" placeholder="What room will this session be in?">
+                                    <input type="text" id="teacher" oninput="updateReserveButtonDisabledness()" class="accountPanel textEntry" maxlength="64" name="teacher" autocomplete="off" placeholder="e.g. aschultzer@wfsd.k12.ny.us">
                                     <input type="text" id="last" oninput="updateReserveButtonDisabledness()" class="accountPanel textEntry" maxlength="32" name="last" autocomplete="off" placeholder="What class do you need help in?">
                                     <textarea id="bio" class="accountPanel textEntry" maxlength="540" name="bio" autocomplete="off" placeholder="Anything else you want to let your tutor know? (Optional)"></textarea>
                                 </div>
