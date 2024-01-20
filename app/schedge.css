@@ -14,6 +14,7 @@ body {
     text-align: center;
     font-family: Consolas, monaco, monospace; 
     font-size: 2vh;
+    overflow: hidden;
 }
 
 #adPanel {
@@ -176,7 +177,7 @@ td {
     display: none;
 }
 
-#test {
+.eventContainer {
     position: relative;
     bottom: 0.2vh;
     height: 0;
@@ -190,17 +191,17 @@ td {
     margin-right: auto;
     margin-bottom: 0.4vh;
     border-radius: 3px;
-    border: 2px solid var(--monke-green-border);
+    border: 2px solid rgba(0,0,0, 0.30);
     font-weight: normal;
     font-size: 1.5vh;
 }
 
 .event:hover {
-    background-color: var(--monke-green-hover);
+    filter: brightness(90%);
 }
 
 .event:active {
-    background-color: var(--monke-green-active);
+    filter: brightness(80%);
 }
 
 #infoPanel {
@@ -213,4 +214,22 @@ td {
     border-left-color: black;
     border-left-style: solid;
     background-color: white;
+}
+
+.slot:hover {
+    transform: scale(1.03);
+}
+
+.slot:active {
+    transform: scale(1.04);
+}
+
+.amTutee {
+    background-color: green;
+    color: white;
+}
+
+.amTutor {
+    background-color: yellow;
+    color: black;
 }
