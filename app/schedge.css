@@ -233,3 +233,12 @@ td {
     background-color: yellow;
     color: black;
 }
+
+#subjectSelector {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    margin-left: 10%;
+    margin-right: 10%;
+}
