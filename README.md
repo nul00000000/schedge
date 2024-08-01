@@ -1,4 +1,4 @@
 # schedge
 Schedge 👍
 
-This is the authorization server for not only Schedge.net, but also monke.gay
+This is the website for schedge which is so fun and good
